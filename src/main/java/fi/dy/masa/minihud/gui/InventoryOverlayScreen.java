@@ -9,12 +9,15 @@ import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.entity.CrafterBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EnderChestInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -23,28 +26,23 @@ import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.render.InventoryOverlay;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.BlockUtils;
-import fi.dy.masa.malilib.util.GuiUtils;
-import fi.dy.masa.malilib.util.WorldUtils;
+import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.minihud.MiniHUD;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.data.EntitiesDataManager;
 import fi.dy.masa.minihud.event.RenderHandler;
 import fi.dy.masa.minihud.util.RayTraceUtils;
 
-public class InventoryOverlayScreen extends Screen
+public class InventoryOverlayScreen extends Screen implements Drawable
 {
+    private InventoryOverlay.Context previewData;
     private int ticks;
 
-    //public InventoryOverlayScreen(RayTraceUtils.InventoryPreviewData previewData)
     public InventoryOverlayScreen(InventoryOverlay.Context previewData)
     {
         super(Text.literal("Inventory Overlay"));
         this.previewData = previewData;
     }
-
-    //RayTraceUtils.InventoryPreviewData previewData;
-    InventoryOverlay.Context previewData;
 
     @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta)
@@ -111,7 +109,7 @@ public class InventoryOverlayScreen extends Screen
             {
                 lockedSlots = BlockUtils.getDisabledSlots(cbe);
             }
-            else if (previewData.nbt() != null && previewData.nbt().contains("disabled_slots"))
+            else if (previewData.nbt() != null && previewData.nbt().contains(NbtKeys.DISABLED_SLOTS))
             {
                 lockedSlots = BlockUtils.getDisabledSlotsFromNbt(previewData.nbt());
             }
@@ -129,42 +127,47 @@ public class InventoryOverlayScreen extends Screen
                 RenderUtils.setShulkerboxBackgroundTintColor(sbb, Configs.Generic.SHULKER_DISPLAY_BACKGROUND_COLOR.getBooleanValue());
             }
 
+            // Inv Display
             if (totalSlots > 0 && previewData.inv() != null)
             {
                 InventoryOverlay.renderInventoryBackground(type, xInv, yInv, props.slotsPerRow, totalSlots, mc);
                 InventoryOverlay.renderInventoryStacks(type, previewData.inv(), xInv + props.slotOffsetX, yInv + props.slotOffsetY, props.slotsPerRow, startSlot, totalSlots, lockedSlots, mc, drawContext, mouseX, mouseY);
             }
 
-            if (previewData.entity() instanceof PlayerEntity player)
+            // EnderItems Display
+            if (previewData.type() == InventoryOverlay.InventoryRenderType.PLAYER &&
+                previewData.nbt() != null && previewData.nbt().contains(NbtKeys.ENDER_ITEMS))
+            {
+                EnderChestInventory enderItems = InventoryUtils.getPlayerEnderItemsFromNbt(previewData.nbt(), world.getRegistryManager());
+
+                if (enderItems == null)
+                {
+                    enderItems = new EnderChestInventory();
+                }
+
+                //this.dumpInvStacks(enderItems, world);
+                yInv = yCenter + 6;
+                InventoryOverlay.renderInventoryBackground(InventoryOverlay.InventoryRenderType.GENERIC, xInv, yInv, 9, 27, mc);
+                InventoryOverlay.renderInventoryStacks(InventoryOverlay.InventoryRenderType.GENERIC, enderItems, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 9, 0, 27, mc, drawContext, mouseX, mouseY);
+            }
+            else if (previewData.entity() instanceof PlayerEntity player)
             {
                 yInv = yCenter + 6;
                 InventoryOverlay.renderInventoryBackground(InventoryOverlay.InventoryRenderType.GENERIC, xInv, yInv, 9, 27, mc);
                 InventoryOverlay.renderInventoryStacks(InventoryOverlay.InventoryRenderType.GENERIC, player.getEnderChestInventory(), xInv + props.slotOffsetX, yInv + props.slotOffsetY, 9, 0, 27, mc, drawContext, mouseX, mouseY);
             }
 
+            // Entity Display
             if (previewData.entity() != null)
             {
                 InventoryOverlay.renderEquipmentOverlayBackground(x, y, previewData.entity(), drawContext);
                 InventoryOverlay.renderEquipmentStacks(previewData.entity(), x, y, mc, drawContext, mouseX, mouseY);
             }
 
+            // Refresh
             if (ticks % 4 == 0)
             {
                 // Refresh data
-                /*
-                MiniHUD.logger.warn("render():1: type [{}], previewData.type [{}], previewData.inv [{}], previewData.be [{}], previewData.ent [{}], previewData.nbt [{}]",
-                                    type.toString(), previewData.type().toString(),
-                                    previewData.inv() != null ? previewData.inv().size() : "",
-                                    previewData.be() != null, previewData.entity() != null,
-                                    previewData.nbt() != null ? previewData.nbt().getString("id") : null);
-                MiniHUD.logger.error("1: -> inv.type [{}] // nbt.type [{}]", previewData.inv() != null ? InventoryOverlay.getInventoryType(previewData.inv()) : null, previewData.nbt() != null ? InventoryOverlay.getInventoryType(previewData.nbt()) : null);
-
-                if (previewData.nbt() != null && previewData.nbt().contains("disabled_slots"))
-                {
-                    MiniHUD.logger.warn("1: -> disabled_slots [{}]", previewData.nbt().get("disabled_slots"));
-                }
-                 */
-
                 if (previewData.be() != null)
                 {
                     RenderHandler.getInstance().requestBlockEntityAt(world, previewData.be().getPos());
@@ -175,79 +178,6 @@ public class InventoryOverlayScreen extends Screen
                     EntitiesDataManager.getInstance().requestEntity(previewData.entity().getId());
                     previewData = RayTraceUtils.getTargetInventoryFromEntity(previewData.entity(), previewData.nbt());
                 }
-
-                /*
-                if (previewData.te() != null)
-                {
-                    RenderHandler.getInstance().requestBlockEntityAt(world, previewData.te().getPos());
-                    var inv = InventoryUtils.getInventory(world, previewData.te().getPos());
-                    previewData = new RayTraceUtils.InventoryPreviewData(inv, world.getBlockEntity(previewData.te().getPos()), null);
-                 */
-                /*
-                if (previewData.be() != null)
-                {
-                    Inventory lastInv = previewData.inv();
-                    BlockEntity lastBe = previewData.be();
-                    NbtCompound lastNbt = previewData.nbt();
-                    Inventory inv;
-                    BlockEntity be = world.getBlockEntity(previewData.be().getPos());
-                    NbtCompound nbt = new NbtCompound();
-
-                    if (be != null)
-                    {
-
-                    }
-
-                    MiniHUD.logger.warn("render():1: type [{}], previewData.type [{}], previewData.inv [{}], previewData.be [{}], previewData.ent [{}], previewData.nbt [{}]", type.toString(), previewData.type().toString(),
-                                        previewData.inv() != null, previewData.be() != null, previewData.entity() != null, previewData.nbt() != null ? previewData.nbt().getString("id") : null);
-                    MiniHUD.logger.error("1: -> inv.type [{}] // nbt.type [{}]", previewData.inv() != null ? InventoryOverlay.getInventoryType(previewData.inv()) : null, previewData.nbt() != null ? InventoryOverlay.getInventoryType(previewData.nbt()) : null);
-
-                    if (previewData.nbt() != null && previewData.nbt().contains("disabled_slots"))
-                    {
-                        MiniHUD.logger.warn("1: -> disabled_slots [{}]", previewData.nbt().get("disabled_slots"));
-                    }
-
-                    nbt = RenderHandler.getInstance().requestBlockEntityAt(world, previewData.be().getPos());
-                    inv = InventoryUtils.getInventory(world, previewData.be().getPos());
-
-                    if (inv == null)
-                    {
-                        inv = InventoryUtils.getNbtInventory(previewData.nbt(), previewData.inv() != null ? previewData.inv().size() : -1, world.getRegistryManager());
-                    }
-                    //world.getBlockEntity(previewData.be().getPos())
-                    previewData = new InventoryOverlay.Context(InventoryOverlay.getBestInventoryType(inv, previewData.nbt(), previewData), inv, world.getBlockEntity(previewData.be().getPos()), null, previewData.nbt());
-                }
-                else if (previewData.entity() != null)
-                {
-                    MiniHUD.logger.warn("render():2: type [{}], previewData.type [{}], previewData.inv [{}], previewData.be [{}], previewData.ent [{}], previewData.nbt [{}]", type.toString(), previewData.type().toString(),
-                                        previewData.inv() != null, previewData.be() != null, previewData.entity() != null, previewData.nbt() != null ? previewData.nbt().getString("id") : null);
-                    MiniHUD.logger.error("2: -> inv.type [{}] // nbt.type [{}]", previewData.inv() != null ? InventoryOverlay.getInventoryType(previewData.inv()) : null, previewData.nbt() != null ? InventoryOverlay.getInventoryType(previewData.nbt()) : null);
-
-                    if (previewData.nbt() != null && previewData.nbt().contains("disabled_slots"))
-                    {
-                        MiniHUD.logger.warn("2: -> disabled_slots [{}]", previewData.nbt().get("disabled_slots"));
-                    }
-                    EntitiesDataStorage.getInstance().requestEntity(previewData.entity().getId());
-                    previewData = RayTraceUtils.getTargetInventoryFromEntity(previewData.entity(), previewData.nbt());
-                }
-                else if (previewData.nbt() != null)
-                {
-                    MiniHUD.logger.warn("render():3: type [{}], previewData.type [{}], previewData.inv [{}], previewData.be [{}], previewData.ent [{}], previewData.nbt [{}]", type.toString(), previewData.type().toString(),
-                                        previewData.inv() != null, previewData.be() != null, previewData.entity() != null, previewData.nbt() != null ? previewData.nbt().getString("id") : null);
-                    MiniHUD.logger.error("3: -> inv.type [{}] // nbt.type [{}]", previewData.inv() != null ? InventoryOverlay.getInventoryType(previewData.inv()) : null, previewData.nbt() != null ? InventoryOverlay.getInventoryType(previewData.nbt()) : null);
-
-                    NbtCompound nbt = previewData.nbt().copy();
-
-                    if (nbt.contains("disabled_slots"))
-                    {
-                        MiniHUD.logger.warn("3: -> disabled_slots [{}]", nbt.get("disabled_slots"));
-                    }
-                    var inv = InventoryUtils.getNbtInventory(nbt, previewData.inv() != null ? previewData.inv().size() : -1, world.getRegistryManager());
-                    previewData = new InventoryOverlay.Context(InventoryOverlay.getBestInventoryType(inv != null ? inv : previewData.inv(), nbt, previewData),
-                                                               inv != null ? inv : previewData.inv(), previewData.be() != null ? previewData.be() : null,
-                                                               previewData.entity() != null ? previewData.entity() : null, nbt);
-                }
-                 */
             }
         }
     }
@@ -256,5 +186,32 @@ public class InventoryOverlayScreen extends Screen
     public boolean shouldPause()
     {
         return false;
+    }
+
+    public static void dumpInvStacks(Inventory inv, World world)
+    {
+        System.out.print("dumpInvStacks() -->\n");
+
+        if (inv == null || inv.size() <= 0 || world == null)
+        {
+            System.out.print("EMPTY / NULL\n");
+            return;
+        }
+
+        for (int i = 0; i < inv.size(); i++)
+        {
+            ItemStack stack = inv.getStack(i);
+
+            if (stack.isEmpty())
+            {
+                System.out.printf("slot[%d]: [%s]\n", i, "minecraft:air [EMPTY]");
+            }
+            else
+            {
+                System.out.printf("slot[%d]: [%s]\n", i, inv.getStack(i).toNbt(world.getRegistryManager()));
+            }
+        }
+
+        System.out.print("END\n");
     }
 }
