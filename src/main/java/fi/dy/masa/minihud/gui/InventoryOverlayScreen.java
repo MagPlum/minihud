@@ -104,7 +104,6 @@ public class InventoryOverlayScreen extends Screen implements Drawable
                 xInv = xCenter + 2;
                 yInv = Math.min(yInv, yCenter - 92);
             }
-            //if (previewData.te() instanceof CrafterBlockEntity cbe)
             if (previewData.be() instanceof CrafterBlockEntity cbe)
             {
                 lockedSlots = BlockUtils.getDisabledSlots(cbe);
@@ -116,8 +115,10 @@ public class InventoryOverlayScreen extends Screen implements Drawable
 
             if (!armourItems.isEmpty())
             {
-                InventoryOverlay.renderInventoryBackground(type, xInv, yInv, 1, armourItems.size(), mc);
-                InventoryOverlay.renderInventoryStacks(type, new SimpleInventory(armourItems.toArray(new ItemStack[0])), xInv + props.slotOffsetX, yInv + props.slotOffsetY, 1, 0, armourItems.size(), mc, drawContext, mouseX, mouseY);
+                Inventory horseInv = new SimpleInventory(armourItems.toArray(new ItemStack[0]));
+                InventoryOverlay.renderInventoryBackground(type, xInv, yInv, 1, horseInv.size(), mc);
+                InventoryOverlay.renderInventoryBackgroundSlots(type, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
+                InventoryOverlay.renderInventoryStacks(type, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 1, 0, horseInv.size(), mc, drawContext, mouseX, mouseY);
                 xInv += 32 + 4;
             }
 
@@ -131,6 +132,13 @@ public class InventoryOverlayScreen extends Screen implements Drawable
             if (totalSlots > 0 && previewData.inv() != null)
             {
                 InventoryOverlay.renderInventoryBackground(type, xInv, yInv, props.slotsPerRow, totalSlots, mc);
+
+                if (type == InventoryOverlay.InventoryRenderType.BREWING_STAND)
+                {
+                    InventoryOverlay.renderBrewerBackgroundSlots(previewData.inv(), xInv, yInv, drawContext);
+                }
+
+                //dumpInvStacks(previewData.inv(), world);
                 InventoryOverlay.renderInventoryStacks(type, previewData.inv(), xInv + props.slotOffsetX, yInv + props.slotOffsetY, props.slotsPerRow, startSlot, totalSlots, lockedSlots, mc, drawContext, mouseX, mouseY);
             }
 
@@ -145,7 +153,7 @@ public class InventoryOverlayScreen extends Screen implements Drawable
                     enderItems = new EnderChestInventory();
                 }
 
-                //this.dumpInvStacks(enderItems, world);
+                //dumpInvStacks(enderItems, world);
                 yInv = yCenter + 6;
                 InventoryOverlay.renderInventoryBackground(InventoryOverlay.InventoryRenderType.GENERIC, xInv, yInv, 9, 27, mc);
                 InventoryOverlay.renderInventoryStacks(InventoryOverlay.InventoryRenderType.GENERIC, enderItems, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 9, 0, 27, mc, drawContext, mouseX, mouseY);
