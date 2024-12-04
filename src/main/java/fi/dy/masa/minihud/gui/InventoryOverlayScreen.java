@@ -117,7 +117,7 @@ public class InventoryOverlayScreen extends Screen implements Drawable
             {
                 Inventory horseInv = new SimpleInventory(armourItems.toArray(new ItemStack[0]));
                 InventoryOverlay.renderInventoryBackground(type, xInv, yInv, 1, horseInv.size(), mc);
-                //InventoryOverlay.renderInventoryBackgroundSlots(type, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
+                InventoryOverlay.renderInventoryBackgroundSlots(type, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
                 InventoryOverlay.renderInventoryStacks(type, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 1, 0, horseInv.size(), mc, drawContext, mouseX, mouseY);
                 xInv += 32 + 4;
             }
@@ -132,12 +132,10 @@ public class InventoryOverlayScreen extends Screen implements Drawable
             {
                 InventoryOverlay.renderInventoryBackground(type, xInv, yInv, props.slotsPerRow, totalSlots, mc);
 
-                /*
                 if (type == InventoryOverlay.InventoryRenderType.BREWING_STAND)
                 {
                     InventoryOverlay.renderBrewerBackgroundSlots(previewData.inv(), xInv, yInv, drawContext);
                 }
-                 */
 
                 //dumpInvStacks(previewData.inv(), world);
                 InventoryOverlay.renderInventoryStacks(type, previewData.inv(), xInv + props.slotOffsetX, yInv + props.slotOffsetY, props.slotsPerRow, startSlot, totalSlots, lockedSlots, mc, drawContext, mouseX, mouseY);
