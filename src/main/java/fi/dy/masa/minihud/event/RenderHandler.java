@@ -39,6 +39,8 @@ import net.minecraft.entity.Tameable;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.decoration.painting.PaintingEntity;
+import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.SkeletonEntity;
@@ -62,7 +64,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.OptionalChunk;
 import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
@@ -1290,6 +1294,29 @@ public class RenderHandler implements IRenderer
                             this.addLineI18n("minihud.info_line.entity_variant.horse", horsePair.getLeft().asString(), horsePair.getRight().name().toLowerCase());
                         }
                     }
+                    else if (entityType.equals(EntityType.PAINTING))
+                    {
+                        Pair<Direction, PaintingVariant> paintingPair = EntityUtils.getPaintingDataFromNbt(nbt, world.getRegistryManager());
+
+                        if (paintingPair.getRight() != null)
+                        {
+                            Optional<Text> title = paintingPair.getRight().title();
+                            Optional<Text> author = paintingPair.getRight().author();
+
+                            if (title.isPresent() && author.isPresent())
+                            {
+                                this.addLineI18n("minihud.info_line.entity_variant.painting.both", title.get().getString(), author.get().getString());
+                            }
+                            else if (title.isPresent())
+                            {
+                                this.addLineI18n("minihud.info_line.entity_variant.painting.title_only", title.get().getString());
+                            }
+                            else if (author.isPresent())
+                            {
+                                this.addLineI18n("minihud.info_line.entity_variant.painting.author_only", author.get().getString());
+                            }
+                        }
+                    }
                     else if (entityType.equals(EntityType.PARROT))
                     {
                         ParrotEntity.Variant variant = EntityUtils.getParrotVariantFromNbt(nbt);
@@ -1297,6 +1324,15 @@ public class RenderHandler implements IRenderer
                         if (variant != null)
                         {
                             this.addLineI18n("minihud.info_line.entity_variant.parrot", variant.asString());
+                        }
+                    }
+                    else if (entityType.equals(EntityType.RABBIT))
+                    {
+                        RabbitEntity.RabbitType rabbitType = EntityUtils.getRabbitTypeFromNbt(nbt);
+
+                        if (rabbitType != null)
+                        {
+                            this.addLineI18n("minihud.info_line.entity_variant.rabbit", rabbitType.asString());
                         }
                     }
                     else if (entityType.equals(EntityType.SHEEP))
@@ -1345,9 +1381,36 @@ public class RenderHandler implements IRenderer
                 {
                     this.addLineI18n("minihud.info_line.entity_variant.horse", horse.getVariant().asString(), horse.getMarking().name().toLowerCase());
                 }
+                else if (pair.getLeft() instanceof PaintingEntity painting)
+                {
+                    PaintingVariant paintingVariant = painting.getVariant().value();
+
+                    if (paintingVariant != null)
+                    {
+                        Optional<Text> title = paintingVariant.title();
+                        Optional<Text> author = paintingVariant.author();
+
+                        if (title.isPresent() && author.isPresent())
+                        {
+                            this.addLineI18n("minihud.info_line.entity_variant.painting.both", title.get().getString(), author.get().getString());
+                        }
+                        else if (title.isPresent())
+                        {
+                            this.addLineI18n("minihud.info_line.entity_variant.painting.title_only", title.get().getString());
+                        }
+                        else if (author.isPresent())
+                        {
+                            this.addLineI18n("minihud.info_line.entity_variant.painting.author_only", author.get().getString());
+                        }
+                    }
+                }
                 else if (pair.getLeft() instanceof ParrotEntity parrot)
                 {
                     this.addLineI18n("minihud.info_line.entity_variant.parrot", parrot.getVariant().asString());
+                }
+                else if (pair.getLeft() instanceof RabbitEntity rabbit)
+                {
+                    this.addLineI18n("minihud.info_line.entity_variant.rabbit", rabbit.getVariant().asString());
                 }
                 else if (pair.getLeft() instanceof SheepEntity sheep)
                 {
