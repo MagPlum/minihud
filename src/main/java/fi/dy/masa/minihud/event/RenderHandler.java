@@ -1300,6 +1300,8 @@ public class RenderHandler implements IRenderer
 
                         if (paintingPair.getRight() != null)
                         {
+                            // TODO 1.21.3+
+                            /*
                             Optional<Text> title = paintingPair.getRight().title();
                             Optional<Text> author = paintingPair.getRight().author();
 
@@ -1315,6 +1317,10 @@ public class RenderHandler implements IRenderer
                             {
                                 this.addLineI18n("minihud.info_line.entity_variant.painting.author_only", author.get().getString());
                             }
+                             */
+                            Identifier id = paintingPair.getRight().assetId();
+                            //RegistryEntry<PaintingVariant> entry = world.getRegistryManager().get(RegistryKeys.PAINTING_VARIANT).getEntry(paintingPair.getRight());
+                            this.addLineI18n("minihud.info_line.entity_variant.painting.title_only", id.getPath());
                         }
                     }
                     else if (entityType.equals(EntityType.PARROT))
@@ -1387,6 +1393,8 @@ public class RenderHandler implements IRenderer
 
                     if (paintingVariant != null)
                     {
+                        // TODO 1.21.2+
+                        /*
                         Optional<Text> title = paintingVariant.title();
                         Optional<Text> author = paintingVariant.author();
 
@@ -1402,6 +1410,11 @@ public class RenderHandler implements IRenderer
                         {
                             this.addLineI18n("minihud.info_line.entity_variant.painting.author_only", author.get().getString());
                         }
+                         */
+
+                        Identifier id = paintingVariant.assetId();
+                        //RegistryEntry<PaintingVariant> entry = world.getRegistryManager().get(RegistryKeys.PAINTING_VARIANT).getEntry(paintingPair.getRight());
+                        this.addLineI18n("minihud.info_line.entity_variant.painting.title_only", id.getPath());
                     }
                 }
                 else if (pair.getLeft() instanceof ParrotEntity parrot)
