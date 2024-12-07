@@ -182,8 +182,7 @@ public class RayTraceUtils
                     lastBlockEntityContext = null;
                 }
 
-                if (ctx != null &&
-                   (ctx.inv() != null && !ctx.inv().isEmpty()))
+                if (ctx != null && ctx.inv() != null)
                 {
                     lastBlockEntityContext = Pair.of(pos, ctx);
                     return ctx;
