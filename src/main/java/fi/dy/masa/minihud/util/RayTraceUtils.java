@@ -182,8 +182,7 @@ public class RayTraceUtils
                     lastBlockEntityContext = null;
                 }
 
-                if (ctx != null &&
-                    (ctx.inv() != null && !ctx.inv().isEmpty()))
+                if (ctx != null && ctx.inv() != null)
                 {
                     lastBlockEntityContext = Pair.of(pos, ctx);
                     return ctx;
@@ -228,17 +227,17 @@ public class RayTraceUtils
             }
 
             if (ctx != null &&
-                (ctx.inv() != null && !ctx.inv().isEmpty()))
+               (ctx.inv() != null && !ctx.inv().isEmpty()))
             {
                 lastEntityContext = Pair.of(entity.getId(), ctx);
                 return ctx;
             }
             // Non-Inventory/Empty Entity
             else if (ctx != null &&
-                (ctx.type() == InventoryOverlay.InventoryRenderType.WOLF ||
-                 ctx.type() == InventoryOverlay.InventoryRenderType.VILLAGER ||
-                 ctx.type() == InventoryOverlay.InventoryRenderType.HORSE ||
-                 ctx.type() == InventoryOverlay.InventoryRenderType.PLAYER))
+                    (ctx.type() == InventoryOverlay.InventoryRenderType.WOLF ||
+                     ctx.type() == InventoryOverlay.InventoryRenderType.VILLAGER ||
+                     ctx.type() == InventoryOverlay.InventoryRenderType.HORSE ||
+                     ctx.type() == InventoryOverlay.InventoryRenderType.PLAYER))
             {
                 lastEntityContext = Pair.of(entity.getId(), ctx);
                 return ctx;
