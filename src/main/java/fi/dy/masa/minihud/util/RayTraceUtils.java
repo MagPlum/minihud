@@ -25,6 +25,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -176,6 +177,7 @@ public class RayTraceUtils
 
                 //MiniHUD.logger.warn("getTarget():2: pos [{}], be [{}], nbt [{}]", pos.toShortString(), be != null, nbt != null);
                 InventoryOverlay.Context ctx = getTargetInventoryFromBlock(world, pos, be, nbt);
+                //dumpContext(ctx);
 
                 if (lastBlockEntityContext != null && !lastBlockEntityContext.getLeft().equals(pos))
                 {
@@ -220,14 +222,14 @@ public class RayTraceUtils
 
             //MiniHUD.logger.error("getTarget(): Entity [{}] raw NBT [{}]", entity.getId(), nbt.toString());
             InventoryOverlay.Context ctx = getTargetInventoryFromEntity(world.getEntityById(entity.getId()), nbt);
+            //dumpContext(ctx);
 
             if (lastEntityContext != null && !lastEntityContext.getLeft().equals(entity.getId()))
             {
                 lastEntityContext = null;
             }
 
-            if (ctx != null &&
-               (ctx.inv() != null && !ctx.inv().isEmpty()))
+            if (ctx != null && ctx.inv() != null)
             {
                 lastEntityContext = Pair.of(entity.getId(), ctx);
                 return ctx;
@@ -237,7 +239,9 @@ public class RayTraceUtils
                     (ctx.type() == InventoryOverlay.InventoryRenderType.WOLF ||
                      ctx.type() == InventoryOverlay.InventoryRenderType.VILLAGER ||
                      ctx.type() == InventoryOverlay.InventoryRenderType.HORSE ||
-                     ctx.type() == InventoryOverlay.InventoryRenderType.PLAYER))
+                     ctx.type() == InventoryOverlay.InventoryRenderType.PLAYER ||
+                     ctx.type() == InventoryOverlay.InventoryRenderType.ARMOR_STAND ||
+                     ctx.type() == InventoryOverlay.InventoryRenderType.LIVING_ENTITY))
             {
                 lastEntityContext = Pair.of(entity.getId(), ctx);
                 return ctx;
@@ -249,6 +253,25 @@ public class RayTraceUtils
         }
 
         return null;
+    }
+
+    private static void dumpContext(InventoryOverlay.Context ctx)
+    {
+        System.out.print("Context Dump --> ");
+
+        if (ctx == null)
+        {
+            System.out.print("NULL!\n");
+            return;
+        }
+
+        System.out.printf("\nTYPE: [%s]\n", ctx.type().name());
+        System.out.printf("BE  : [%s]\n", ctx.be() != null ? Registries.BLOCK_ENTITY_TYPE.getId(ctx.be().getType()) : "<NULL>");
+        System.out.printf("ENT : [%s]\n", ctx.entity() != null ? Registries.ENTITY_TYPE.getId(ctx.entity().getType()) : "<NULL>");
+        System.out.printf("INV : [%s]\n", ctx.inv() != null ? "size: "+ctx.inv().size()+"/ empty: "+ctx.inv().isEmpty() : "<NULL>");
+        System.out.printf("NBT : [%s]\n", ctx.nbt() != null ? ctx.nbt().toString() : "<NULL>");
+
+        System.out.print("--> EOF\n");
     }
 
     public static @Nullable InventoryOverlay.Context getTargetInventoryFromBlock(World world, BlockPos pos, @Nullable BlockEntity be, NbtCompound nbt)
