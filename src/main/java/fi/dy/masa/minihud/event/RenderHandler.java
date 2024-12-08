@@ -1294,6 +1294,16 @@ public class RenderHandler implements IRenderer
                             this.addLineI18n("minihud.info_line.entity_variant.horse", horsePair.getLeft().asString(), horsePair.getRight().name().toLowerCase());
                         }
                     }
+                    else if (entityType.equals(EntityType.LLAMA) || entityType.equals(EntityType.TRADER_LLAMA))
+                    {
+                        //Pair<LlamaEntity.Variant, Integer> llamaPair = EntityUtils.getLlamaTypeFromNbt(nbt);
+                        Pair<LlamaEntity.Variant, Integer> llamaPair = Pair.of(LlamaEntity.Variant.byId(nbt.getInt(NbtKeys.VARIANT_2)), nbt.getInt("Strength"));
+
+                        if (llamaPair.getLeft() != null)
+                        {
+                            this.addLineI18n("minihud.info_line.entity_variant.llama", llamaPair.getLeft().asString(), llamaPair.getRight());
+                        }
+                    }
                     else if (entityType.equals(EntityType.PAINTING))
                     {
                         Pair<Direction, PaintingVariant> paintingPair = EntityUtils.getPaintingDataFromNbt(nbt, world.getRegistryManager());
@@ -1386,6 +1396,10 @@ public class RenderHandler implements IRenderer
                 else if (pair.getLeft() instanceof HorseEntity horse)
                 {
                     this.addLineI18n("minihud.info_line.entity_variant.horse", horse.getVariant().asString(), horse.getMarking().name().toLowerCase());
+                }
+                else if (pair.getLeft() instanceof LlamaEntity llama)
+                {
+                    this.addLineI18n("minihud.info_line.entity_variant.llama", llama.getVariant().asString(), llama.getStrength());
                 }
                 else if (pair.getLeft() instanceof PaintingEntity painting)
                 {
