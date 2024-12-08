@@ -929,6 +929,7 @@
   "minihud.info_line.entity_variant.cat": "고양이 유형: §b%s§r (%s 색)",
   "minihud.info_line.entity_variant.frog": "개구리 유형: §b%s§r",
   "minihud.info_line.entity_variant.horse": "말 유형: §b%s / %s§r",
+  "minihud.info_line.entity_variant.llama": "Llama Variant: §b%s§r, Strength: §e%d§r",
   "minihud.info_line.entity_variant.painting.both": "Painting Variant: §b%s§r by §e%s§r",
   "minihud.info_line.entity_variant.painting.title_only": "Painting Variant: §b%s§r",
   "minihud.info_line.entity_variant.painting.author_only": "Painting Variant: by §e%s§r",
