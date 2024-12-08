@@ -929,6 +929,7 @@
   "minihud.info_line.entity_variant.cat": "Cat Variant: §b%s§r (%s collar)",
   "minihud.info_line.entity_variant.frog": "Frog Variant: §b%s§r",
   "minihud.info_line.entity_variant.horse": "Horse Variant: §b%s / %s§r",
+  "minihud.info_line.entity_variant.llama": "Llama Variant: §b%s§r, Strength: §e%d§r",
   "minihud.info_line.entity_variant.painting.both": "Painting Variant: §b%s§r by §e%s§r",
   "minihud.info_line.entity_variant.painting.title_only": "Painting Variant: §b%s§r",
   "minihud.info_line.entity_variant.painting.author_only": "Painting Variant: by §e%s§r",
