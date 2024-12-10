@@ -1721,7 +1721,6 @@ public class RenderHandler implements IRenderer
         }
         else if (type == InfoToggle.BLOCK_PROPS)
         {
-            // todo
             this.getBlockProperties(mc);
         }
     }
