@@ -30,7 +30,6 @@ import net.minecraft.world.World;
 import fi.dy.masa.malilib.util.Constants;
 import fi.dy.masa.malilib.util.IntBoundingBox;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
-import fi.dy.masa.minihud.data.HudDataManager;
 import fi.dy.masa.minihud.mixin.IMixinAbstractFurnaceBlockEntity;
 
 public class MiscUtils
@@ -250,7 +249,7 @@ public class MiscUtils
 
     public static int getFurnaceXpAmount(World world, @Nonnull NbtCompound nbt)
     {
-        Object2IntOpenHashMap<Identifier> recipes = BlockUtils.getRecipesUsedFromNbt(nbt);
+        Object2IntOpenHashMap<Identifier> recipes = NbtBlockUtils.getRecipesUsedFromNbt(nbt);
         double xp = 0.0;
 
         for (Object2IntMap.Entry<Identifier> entry : recipes.object2IntEntrySet())
