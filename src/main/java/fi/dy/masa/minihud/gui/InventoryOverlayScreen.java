@@ -26,7 +26,12 @@ import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.render.InventoryOverlay;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.*;
+import fi.dy.masa.malilib.util.GuiUtils;
+import fi.dy.masa.malilib.util.InventoryUtils;
+import fi.dy.masa.malilib.util.WorldUtils;
+import fi.dy.masa.malilib.util.game.BlockUtils;
+import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
+import fi.dy.masa.malilib.util.nbt.NbtKeys;
 import fi.dy.masa.minihud.MiniHUD;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.data.EntitiesDataManager;
@@ -111,7 +116,7 @@ public class InventoryOverlayScreen extends Screen implements Drawable
             }
             else if (previewData.nbt() != null && previewData.nbt().contains(NbtKeys.DISABLED_SLOTS))
             {
-                lockedSlots = BlockUtils.getDisabledSlotsFromNbt(previewData.nbt());
+                lockedSlots = NbtBlockUtils.getDisabledSlotsFromNbt(previewData.nbt());
             }
 
             if (!armourItems.isEmpty())
