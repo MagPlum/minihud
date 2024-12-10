@@ -78,6 +78,7 @@ public enum InfoToggle implements IConfigInteger, IHotkeyTogglable
     LOOKING_AT_BLOCK_CHUNK  ("infoLookingAtBlockInChunk",   false, ""),
     BLOCK_PROPS             ("infoBlockProperties",         false, ""),
     BEE_COUNT               ("infoBeeCount",                false, true, ""),
+    COMPARATOR_OUTPUT       ("infoComparatorOutput",        false, true, ""),
     HONEY_LEVEL             ("infoHoneyLevel",              false, ""),
     FURNACE_XP              ("infoFurnaceXp",               false, true, ""),
 
