@@ -1,32 +1,19 @@
 package fi.dy.masa.minihud.event;
 
-import fi.dy.masa.malilib.config.HudAlignment;
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.interfaces.IRenderer;
-import fi.dy.masa.malilib.render.InventoryOverlay;
-import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.*;
-import fi.dy.masa.malilib.util.EntityUtils;
-import fi.dy.masa.malilib.util.InventoryUtils;
-import fi.dy.masa.minihud.config.Configs;
-import fi.dy.masa.minihud.config.InfoToggle;
-import fi.dy.masa.minihud.config.RendererToggle;
-import fi.dy.masa.minihud.data.EntitiesDataManager;
-import fi.dy.masa.minihud.data.HudDataManager;
-import fi.dy.masa.minihud.data.MobCapDataHandler;
-import fi.dy.masa.minihud.gui.InventoryOverlayScreen;
-import fi.dy.masa.minihud.mixin.*;
-import fi.dy.masa.minihud.renderer.OverlayRenderer;
-import fi.dy.masa.minihud.util.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import com.llamalad7.mixinextras.lib.apache.commons.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+import org.joml.Matrix4f;
 
 import net.minecraft.block.BeehiveBlock;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
-import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.block.entity.BeehiveBlockEntity;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.entity.*;
 import net.minecraft.block.enums.ChestType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -39,8 +26,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Tameable;
-import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
@@ -57,7 +42,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -72,15 +56,10 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.LightType;
 import net.minecraft.world.LocalDifficulty;
@@ -91,17 +70,30 @@ import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.chunk.light.LightingProvider;
 
-import com.llamalad7.mixinextras.lib.apache.commons.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-import org.joml.Matrix4f;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-
-import com.mojang.blaze3d.systems.RenderSystem;
+import fi.dy.masa.malilib.config.HudAlignment;
+import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.interfaces.IRenderer;
+import fi.dy.masa.malilib.render.RenderUtils;
+import fi.dy.masa.malilib.util.Constants;
+import fi.dy.masa.malilib.util.InventoryUtils;
+import fi.dy.masa.malilib.util.StringUtils;
+import fi.dy.masa.malilib.util.WorldUtils;
+import fi.dy.masa.malilib.util.game.BlockUtils;
+import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
+import fi.dy.masa.malilib.util.nbt.NbtEntityUtils;
+import fi.dy.masa.malilib.util.nbt.NbtKeys;
+import fi.dy.masa.minihud.config.Configs;
+import fi.dy.masa.minihud.config.InfoToggle;
+import fi.dy.masa.minihud.config.RendererToggle;
+import fi.dy.masa.minihud.data.EntitiesDataManager;
+import fi.dy.masa.minihud.data.HudDataManager;
+import fi.dy.masa.minihud.data.MobCapDataHandler;
+import fi.dy.masa.minihud.mixin.*;
+import fi.dy.masa.minihud.renderer.OverlayRenderer;
+import fi.dy.masa.minihud.util.DataStorage;
+import fi.dy.masa.minihud.util.IServerEntityManager;
+import fi.dy.masa.minihud.util.MiscUtils;
+import fi.dy.masa.minihud.util.RayTraceUtils;
 
 public class RenderHandler implements IRenderer
 {
@@ -812,15 +804,52 @@ public class RenderHandler implements IRenderer
                 return;
             }
             if (Configs.Generic.INFO_LINES_USES_NBT.getBooleanValue() &&
-                BlockUtils.getBlockEntityTypeFromNbt(pair.getRight()).equals(BlockEntityType.BEEHIVE) &&
+                NbtBlockUtils.getBlockEntityTypeFromNbt(pair.getRight()).equals(BlockEntityType.BEEHIVE) &&
                 !pair.getRight().isEmpty())
             {
-                Pair<List<BeehiveBlockEntity.BeeData>, BlockPos> bees = BlockUtils.getBeesDataFromNbt(pair.getRight());
-                this.addLineI18n("minihud.info_line.bee_count.flower_pos", bees.getLeft().size(), bees.getRight().toShortString());
+                Pair<List<BeehiveBlockEntity.BeeData>, BlockPos> bees = NbtBlockUtils.getBeesDataFromNbt(pair.getRight());
+
+                // This probablly means no Server Data, so don't show the flower_pos
+                if (bees.getRight().equals(BlockPos.ORIGIN))
+                {
+                    this.addLineI18n("minihud.info_line.bee_count", bees.getLeft().size());
+                }
+                else
+                {
+                    this.addLineI18n("minihud.info_line.bee_count.flower_pos", bees.getLeft().size(), bees.getRight().toShortString());
+                }
             }
             else if (pair.getLeft() instanceof BeehiveBlockEntity be)
             {
                 this.addLineI18n("minihud.info_line.bee_count", ((BeehiveBlockEntity) be).getBeeCount());
+            }
+        }
+        else if (type == InfoToggle.COMPARATOR_OUTPUT)
+        {
+            World bestWorld = WorldUtils.getBestWorld(mc);
+            Pair<BlockEntity, NbtCompound> pair = this.getTargetedBlockEntity(bestWorld, mc);
+
+            if (pair == null)
+            {
+                return;
+            }
+            if (Configs.Generic.INFO_LINES_USES_NBT.getBooleanValue() &&
+                NbtBlockUtils.getBlockEntityTypeFromNbt(pair.getRight()).equals(BlockEntityType.COMPARATOR) &&
+                !pair.getRight().isEmpty())
+            {
+                int output = NbtBlockUtils.getOutputSignalFromNbt(pair.getRight());
+
+                if (output > 0)
+                {
+                    this.addLineI18n("minihud.info_line.comparator_output_signal", output);
+                }
+            }
+            else if (pair.getLeft() instanceof ComparatorBlockEntity be)
+            {
+                if (be.getOutputSignal() > 0)
+                {
+                    this.addLineI18n("minihud.info_line.comparator_output_signal", be.getOutputSignal());
+                }
             }
         }
         else if (type == InfoToggle.HONEY_LEVEL)
@@ -844,7 +873,7 @@ public class RenderHandler implements IRenderer
 
             if (Configs.Generic.INFO_LINES_USES_NBT.getBooleanValue() && !pair.getRight().isEmpty())
             {
-                BlockEntityType<?> beType = BlockUtils.getBlockEntityTypeFromNbt(pair.getRight());
+                BlockEntityType<?> beType = NbtBlockUtils.getBlockEntityTypeFromNbt(pair.getRight());
 
                 if (beType.equals(BlockEntityType.FURNACE) ||
                     beType.equals(BlockEntityType.BLAST_FURNACE) ||
@@ -927,7 +956,7 @@ public class RenderHandler implements IRenderer
             if (pair != null && Configs.Generic.INFO_LINES_USES_NBT.getBooleanValue() && !pair.getRight().isEmpty())
             {
                 NbtCompound nbt = pair.getRight();
-                EntityType<?> entityType = EntityUtils.getEntityTypeFromNbt(nbt);
+                EntityType<?> entityType = fi.dy.masa.malilib.util.nbt.NbtEntityUtils.getEntityTypeFromNbt(nbt);
 
                 if (entityType.equals(EntityType.CAMEL) ||
                     entityType.equals(EntityType.DONKEY) ||
@@ -938,7 +967,7 @@ public class RenderHandler implements IRenderer
                     entityType.equals(EntityType.TRADER_LLAMA) ||
                     entityType.equals(EntityType.ZOMBIE_HORSE))
                 {
-                    Pair<Double, Double> horsePair = EntityUtils.getSpeedAndJumpStrengthFromNbt(nbt);
+                    Pair<Double, Double> horsePair = NbtEntityUtils.getSpeedAndJumpStrengthFromNbt(nbt);
                     speed = horsePair.getLeft();
                     jump = horsePair.getRight();
                 }
@@ -1062,11 +1091,11 @@ public class RenderHandler implements IRenderer
             if (Configs.Generic.INFO_LINES_USES_NBT.getBooleanValue() && !pair.getRight().isEmpty())
             {
                 NbtCompound nbt = pair.getRight();
-                EntityType<?> entityType = EntityUtils.getEntityTypeFromNbt(nbt);
+                EntityType<?> entityType = NbtEntityUtils.getEntityTypeFromNbt(nbt);
 
                 if (entityType.equals(EntityType.PANDA))
                 {
-                    Pair<PandaEntity.Gene, PandaEntity.Gene> genes = EntityUtils.getPandaGenesFromNbt(nbt);
+                    Pair<PandaEntity.Gene, PandaEntity.Gene> genes = NbtEntityUtils.getPandaGenesFromNbt(nbt);
 
                     if (genes.getLeft() != null && genes.getRight() != null)
                     {
@@ -1224,9 +1253,9 @@ public class RenderHandler implements IRenderer
                     pair.getLeft() instanceof LivingEntity living && !pair.getRight().isEmpty())
                 {
                     NbtCompound nbt = pair.getRight();
-                    Pair<Double, Double> healthPair = EntityUtils.getHealthFromNbt(nbt);
-                    Pair<UUID, ItemStack> ownerPair = EntityUtils.getOwnerAndSaddle(nbt, world.getRegistryManager());
-                    Pair<Integer, Integer> agePair = EntityUtils.getAgeFromNbt(nbt);
+                    Pair<Double, Double> healthPair = NbtEntityUtils.getHealthFromNbt(nbt);
+                    Pair<UUID, ItemStack> ownerPair = NbtEntityUtils.getOwnerAndSaddle(nbt, world.getRegistryManager());
+                    Pair<Integer, Integer> agePair = NbtEntityUtils.getAgeFromNbt(nbt);
 
                     double health = healthPair.getLeft();
                     double maxHealth = healthPair.getRight();
@@ -1298,11 +1327,11 @@ public class RenderHandler implements IRenderer
                     pair.getLeft() instanceof LivingEntity living && !pair.getRight().isEmpty())
                 {
                     NbtCompound nbt = pair.getRight();
-                    EntityType<?> entityType = EntityUtils.getEntityTypeFromNbt(nbt);
+                    EntityType<?> entityType = NbtEntityUtils.getEntityTypeFromNbt(nbt);
 
                     if (entityType.equals(EntityType.AXOLOTL))
                     {
-                        AxolotlEntity.Variant variant = EntityUtils.getAxolotlVariantFromNbt(nbt);
+                        AxolotlEntity.Variant variant = NbtEntityUtils.getAxolotlVariantFromNbt(nbt);
 
                         if (variant != null)
                         {
@@ -1311,7 +1340,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.CAT))
                     {
-                        Pair<RegistryKey<CatVariant>, DyeColor> catPair = EntityUtils.getCatVariantFromNbt(nbt);
+                        Pair<RegistryKey<CatVariant>, DyeColor> catPair = NbtEntityUtils.getCatVariantFromNbt(nbt);
 
                         if (catPair.getLeft() != null)
                         {
@@ -1320,7 +1349,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.FROG))
                     {
-                        RegistryKey<FrogVariant> variant = EntityUtils.getFrogVariantFromNbt(nbt);
+                        RegistryKey<FrogVariant> variant = NbtEntityUtils.getFrogVariantFromNbt(nbt);
 
                         if (variant != null)
                         {
@@ -1329,7 +1358,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.HORSE))
                     {
-                        Pair<HorseColor, HorseMarking> horsePair = EntityUtils.getHorseVariantFromNbt(nbt);
+                        Pair<HorseColor, HorseMarking> horsePair = NbtEntityUtils.getHorseVariantFromNbt(nbt);
 
                         if (horsePair.getLeft() != null)
                         {
@@ -1338,8 +1367,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.LLAMA) || entityType.equals(EntityType.TRADER_LLAMA))
                     {
-                        //Pair<LlamaEntity.Variant, Integer> llamaPair = EntityUtils.getLlamaTypeFromNbt(nbt);
-                        Pair<LlamaEntity.Variant, Integer> llamaPair = Pair.of(LlamaEntity.Variant.byId(nbt.getInt(NbtKeys.VARIANT_2)), nbt.getInt("Strength"));
+                        Pair<LlamaEntity.Variant, Integer> llamaPair = NbtEntityUtils.getLlamaTypeFromNbt(nbt);
 
                         if (llamaPair.getLeft() != null)
                         {
@@ -1348,7 +1376,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.PAINTING))
                     {
-                        Pair<Direction, PaintingVariant> paintingPair = EntityUtils.getPaintingDataFromNbt(nbt, world.getRegistryManager());
+                        Pair<Direction, PaintingVariant> paintingPair = NbtEntityUtils.getPaintingDataFromNbt(nbt, world.getRegistryManager());
 
                         if (paintingPair.getRight() != null)
                         {
@@ -1371,7 +1399,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.PARROT))
                     {
-                        ParrotEntity.Variant variant = EntityUtils.getParrotVariantFromNbt(nbt);
+                        ParrotEntity.Variant variant = NbtEntityUtils.getParrotVariantFromNbt(nbt);
 
                         if (variant != null)
                         {
@@ -1380,7 +1408,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.RABBIT))
                     {
-                        RabbitEntity.RabbitType rabbitType = EntityUtils.getRabbitTypeFromNbt(nbt);
+                        RabbitEntity.RabbitType rabbitType = NbtEntityUtils.getRabbitTypeFromNbt(nbt);
 
                         if (rabbitType != null)
                         {
@@ -1389,7 +1417,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.SHEEP))
                     {
-                        DyeColor color = EntityUtils.getSheepColorFromNbt(nbt);
+                        DyeColor color = NbtEntityUtils.getSheepColorFromNbt(nbt);
 
                         if (color != null)
                         {
@@ -1398,7 +1426,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.TROPICAL_FISH))
                     {
-                        TropicalFishEntity.Variety variant = EntityUtils.getFishVariantFromNbt(nbt);
+                        TropicalFishEntity.Variety variant = NbtEntityUtils.getFishVariantFromNbt(nbt);
 
                         if (variant != null)
                         {
@@ -1407,7 +1435,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.WOLF))
                     {
-                        Pair<RegistryKey<WolfVariant>, DyeColor> wolfPair = EntityUtils.getWolfVariantFromNbt(nbt);
+                        Pair<RegistryKey<WolfVariant>, DyeColor> wolfPair = NbtEntityUtils.getWolfVariantFromNbt(nbt);
 
                         if (wolfPair.getLeft() != null)
                         {
@@ -1497,7 +1525,7 @@ public class RenderHandler implements IRenderer
                     pair.getLeft() instanceof LivingEntity && !pair.getRight().isEmpty())
                 {
                     NbtCompound nbt = pair.getRight();
-                    Map<RegistryEntry<StatusEffect>, StatusEffectInstance> effects = EntityUtils.getActiveStatusEffectsFromNbt(nbt);
+                    Map<RegistryEntry<StatusEffect>, StatusEffectInstance> effects = NbtEntityUtils.getActiveStatusEffectsFromNbt(nbt);
 
                     if (effects == null || effects.isEmpty())
                     {
@@ -1560,23 +1588,23 @@ public class RenderHandler implements IRenderer
                 if (Configs.Generic.INFO_LINES_USES_NBT.getBooleanValue() && !pair.getRight().isEmpty())
                 {
                     NbtCompound nbt = pair.getRight();
-                    EntityType<?> entityType = EntityUtils.getEntityTypeFromNbt(nbt);
+                    EntityType<?> entityType = NbtEntityUtils.getEntityTypeFromNbt(nbt);
 
                     //MiniHUD.logger.error("ZombieDoctor: type [{}], raw nbt [{}]", entityType.getName().getString(), nbt.toString());
 
                     if (entityType.equals(EntityType.ZOMBIE_VILLAGER))
                     {
-                        Pair<Integer, UUID> zombieDoctor = EntityUtils.getZombieConversionTimerFromNbt(nbt);
+                        Pair<Integer, UUID> zombieDoctor = NbtEntityUtils.getZombieConversionTimerFromNbt(nbt);
                         conversionTimer = zombieDoctor.getLeft();
                     }
                     else if (entityType.equals(EntityType.ZOMBIE))
                     {
-                        Pair<Integer, Integer> zombieDoctor = EntityUtils.getDrownedConversionTimerFromNbt(nbt);
+                        Pair<Integer, Integer> zombieDoctor = NbtEntityUtils.getDrownedConversionTimerFromNbt(nbt);
                         conversionTimer = zombieDoctor.getLeft();
                     }
                     else if (entityType.equals(EntityType.SKELETON))
                     {
-                        conversionTimer = EntityUtils.getStrayConversionTimeFromNbt(nbt);
+                        conversionTimer = NbtEntityUtils.getStrayConversionTimeFromNbt(nbt);
                     }
                 }
                 else
@@ -1638,11 +1666,11 @@ public class RenderHandler implements IRenderer
                 if (Configs.Generic.INFO_LINES_USES_NBT.getBooleanValue() && !pair.getRight().isEmpty())
                 {
                     NbtCompound nbt = pair.getRight();
-                    EntityType<?> entityType = EntityUtils.getEntityTypeFromNbt(nbt);
+                    EntityType<?> entityType = NbtEntityUtils.getEntityTypeFromNbt(nbt);
 
                     if (entityType.equals(EntityType.PLAYER))
                     {
-                        Triple<Integer, Integer, Float> triple = EntityUtils.getPlayerExpFromNbt(nbt);
+                        Triple<Integer, Integer, Float> triple = NbtEntityUtils.getPlayerExpFromNbt(nbt);
 
                         if (triple.getLeft() > 0)
                         {
@@ -1693,6 +1721,7 @@ public class RenderHandler implements IRenderer
         }
         else if (type == InfoToggle.BLOCK_PROPS)
         {
+            // todo
             this.getBlockProperties(mc);
         }
     }
