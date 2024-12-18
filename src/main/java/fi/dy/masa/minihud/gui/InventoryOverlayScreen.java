@@ -19,7 +19,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
@@ -30,6 +32,7 @@ import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.malilib.util.InventoryUtils;
 import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.malilib.util.game.BlockUtils;
+import fi.dy.masa.malilib.util.game.wrap.GameWrap;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 import fi.dy.masa.malilib.util.nbt.NbtKeys;
 import fi.dy.masa.minihud.MiniHUD;
@@ -204,7 +207,7 @@ public class InventoryOverlayScreen extends Screen implements Drawable
         return false;
     }
 
-    public static void dumpInvStacks(Inventory inv, World world)
+    public static void dumpInvStacks(Inventory inv, World world, boolean showTooltip)
     {
         System.out.print("dumpInvStacks() -->\n");
 
@@ -225,6 +228,18 @@ public class InventoryOverlayScreen extends Screen implements Drawable
             else
             {
                 System.out.printf("slot[%d]: [%s]\n", i, inv.getStack(i).encode(world.getRegistryManager()));
+
+                if (showTooltip)
+                {
+                    List<Text> toolTips = inv.getStack(i).getTooltip(Item.TooltipContext.create(world), GameWrap.getClientPlayer(), TooltipType.ADVANCED);
+                    int j = 0;
+
+                    for (Text entry : toolTips)
+                    {
+                        System.out.printf("Tooltip[%d]: [%s]\n", j, entry.getString());
+                        j++;
+                    }
+                }
             }
         }
 
