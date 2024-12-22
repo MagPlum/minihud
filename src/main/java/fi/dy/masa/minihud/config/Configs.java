@@ -41,6 +41,7 @@ public class Configs implements IConfigHandler
         public static final ConfigBoolean       BUNDLE_PREVIEW                      = new ConfigBoolean("bundlePreview", false).apply(GENERIC_KEY);
         public static final ConfigBoolean       BUNDLE_DISPLAY_BACKGROUND_COLOR     = new ConfigBoolean("bundleDisplayBgColor", true).apply(GENERIC_KEY);
         public static final ConfigBoolean       BUNDLE_DISPLAY_REQUIRE_SHIFT        = new ConfigBoolean("bundleDisplayRequireShift", true).apply(GENERIC_KEY);
+        public static final ConfigInteger       BUNDLE_DISPLAY_ROW_WIDTH            = new ConfigInteger("bundleDisplayRowWidth", 9, 6, 9).apply(GENERIC_KEY);
         public static final ConfigString        COORDINATE_FORMAT_STRING            = new ConfigString("coordinateFormat", "x: %.1f y: %.1f z: %.1f").apply(GENERIC_KEY);
         public static final ConfigString        DATE_FORMAT_REAL                    = new ConfigString("dateFormatReal", "yyyy-MM-dd HH:mm:ss").apply(GENERIC_KEY);
         public static final ConfigString        DATE_FORMAT_MINECRAFT               = new ConfigString("dateFormatMinecraft", "MC time: (day {DAY}) {HOUR}:{MIN}:xx").apply(GENERIC_KEY);
@@ -127,6 +128,7 @@ public class Configs implements IConfigHandler
                 BUNDLE_PREVIEW,
                 BUNDLE_DISPLAY_BACKGROUND_COLOR,
                 BUNDLE_DISPLAY_REQUIRE_SHIFT,
+                BUNDLE_DISPLAY_ROW_WIDTH,
                 DEBUG_MESSAGES,
                 //DEBUG_DEVELOPMENT_MODE,
                 //DEBUG_RENDERER_PATH_MAX_DIST,
