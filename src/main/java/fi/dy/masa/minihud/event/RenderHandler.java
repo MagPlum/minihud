@@ -1650,7 +1650,7 @@ public class RenderHandler implements IRenderer
         {
             if (mc.player != null)
             {
-                this.addLineI18n("minihud.info_line.player_experience", mc.player.experienceLevel, mc.player.experienceProgress, mc.player.totalExperience);
+                this.addLineI18n("minihud.info_line.player_experience", mc.player.experienceLevel, 100 * mc.player.experienceProgress, mc.player.totalExperience);
             }
         }
         else if (type == InfoToggle.LOOKING_AT_PLAYER_EXP)
@@ -1674,13 +1674,13 @@ public class RenderHandler implements IRenderer
 
                         if (triple.getLeft() > 0)
                         {
-                            this.addLineI18n("minihud.info_line.looking_at_player_exp", triple.getLeft(), triple.getRight(), triple.getMiddle());
+                            this.addLineI18n("minihud.info_line.looking_at_player_exp", triple.getLeft(), triple.getRight(), 100 * triple.getMiddle());
                         }
                     }
                 }
                 else if (pair.getLeft() instanceof ServerPlayerEntity player)
                 {
-                    this.addLineI18n("minihud.info_line.looking_at_player_exp", player.experienceLevel, player.experienceProgress, player.totalExperience);
+                    this.addLineI18n("minihud.info_line.looking_at_player_exp", player.experienceLevel, 100 * player.experienceProgress, player.totalExperience);
                 }
             }
         }
