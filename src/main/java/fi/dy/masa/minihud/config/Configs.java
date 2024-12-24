@@ -31,6 +31,8 @@ public class Configs implements IConfigHandler
     {
         public static final ConfigBoolean       AXOLOTL_TOOLTIPS                    = new ConfigBoolean("axolotlTooltips", false).apply(GENERIC_KEY);
         public static final ConfigBoolean       BEE_TOOLTIPS                        = new ConfigBoolean("beeTooltips", false).apply(GENERIC_KEY);
+        public static final ConfigBoolean       BUNDLE_TOOLTIPS                     = new ConfigBoolean("bundleTooltips", true).apply(GENERIC_KEY);
+        public static final ConfigInteger       BUNDLE_TOOLTIPS_FILL_LEVEL          = new ConfigInteger("bundleTooltipsFillLevel", 64, 1, 64).apply(GENERIC_KEY);
         public static final ConfigBoolean       HONEY_TOOLTIPS                      = new ConfigBoolean("honeyTooltips", false).apply(GENERIC_KEY);
         public static final ConfigInteger       BIOME_OVERLAY_RANGE                 = new ConfigInteger("biomeOverlayRange", 4, 0, 32).apply(GENERIC_KEY);
         public static final ConfigInteger       BIOME_OVERLAY_RANGE_VERTICAL        = new ConfigInteger("biomeOverlayRangeVertical", 0, 0, 32).apply(GENERIC_KEY);
@@ -123,6 +125,8 @@ public class Configs implements IConfigHandler
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 AXOLOTL_TOOLTIPS,
                 BEE_TOOLTIPS,
+                BUNDLE_TOOLTIPS,
+                BUNDLE_TOOLTIPS_FILL_LEVEL,
                 HONEY_TOOLTIPS,
                 BIOME_OVERLAY_SINGLE_COLOR,
                 BUNDLE_PREVIEW,

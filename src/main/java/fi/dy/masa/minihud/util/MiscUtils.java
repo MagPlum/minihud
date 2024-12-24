@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+import org.apache.commons.lang3.math.Fraction;
 
 import net.minecraft.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BlockStateComponent;
+import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.passive.AxolotlEntity;
 import net.minecraft.item.ItemStack;
@@ -25,11 +27,15 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.util.Constants;
 import fi.dy.masa.malilib.util.IntBoundingBox;
+import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
+import fi.dy.masa.minihud.config.Configs;
+import fi.dy.masa.minihud.data.HudDataManager;
 import fi.dy.masa.minihud.mixin.IMixinAbstractFurnaceBlockEntity;
 
 public class MiscUtils
@@ -208,6 +214,21 @@ public class MiscUtils
             }
 
             lines.add(Math.min(1, lines.size()), text);
+        }
+    }
+
+    public static void addBundleTooltip(ItemStack stack, List<Text> lines)
+    {
+        BundleContentsComponent bundleData = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
+        int maxCount = Configs.Generic.BUNDLE_TOOLTIPS_FILL_LEVEL.getIntegerValue();
+
+        if (bundleData != null)
+        {
+            Fraction occupancy = bundleData.getOccupancy();
+            int count = MathHelper.multiplyFraction(occupancy, maxCount);
+            float fillPercent = 100 * occupancy.floatValue();
+            String result = StringUtils.translate("minihud.label.bundle_tooltip.count", count, maxCount, fillPercent);
+            lines.add(Text.of(result));
         }
     }
 
