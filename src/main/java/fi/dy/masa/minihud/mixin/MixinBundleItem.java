@@ -37,15 +37,13 @@ public class MixinBundleItem
         }
     }
 
-    @Inject(method = "appendTooltip", at = @At("HEAD"))
+    @Inject(method = "appendTooltip", at = @At("HEAD"), cancellable = true)
     private void minihud_appendTooltipFix(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type, CallbackInfo ci)
     {
+        // for 1.21.1 and below; this makes it so that `bundleTooltips` replaces the Vanilla function.
         if (Configs.Generic.BUNDLE_TOOLTIPS.getBooleanValue())
         {
-            if (Configs.Generic.BUNDLE_TOOLTIPS_FILL_LEVEL.getIntegerValue() != 64)
-            {
-                // Do Something.
-            }
+            ci.cancel();
         }
     }
 }
