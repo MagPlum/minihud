@@ -221,7 +221,7 @@ public class MiscUtils
     public static void addBundleTooltip(ItemStack stack, List<Text> lines)
     {
         BundleContentsComponent bundleData = stack.get(DataComponentTypes.BUNDLE_CONTENTS);
-        int maxCount = Configs.Generic.BUNDLE_TOOLTIPS_FILL_LEVEL.getIntegerValue();
+        final int maxCount = Configs.Generic.BUNDLE_TOOLTIPS_FILL_LEVEL.getIntegerValue();
 
         if (bundleData != null)
         {
@@ -231,7 +231,7 @@ public class MiscUtils
 
             if (maxCount != 64)
             {
-                count = bundleData.size();
+                count = InventoryUtils.recalculateBundleSize(bundleData, maxCount);
                 fillPercent = 100 * ((float) count / maxCount);
             }
             else
