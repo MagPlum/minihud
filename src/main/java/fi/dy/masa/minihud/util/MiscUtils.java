@@ -225,9 +225,31 @@ public class MiscUtils
         if (bundleData != null)
         {
             Fraction occupancy = bundleData.getOccupancy();
-            int count = MathHelper.multiplyFraction(occupancy, maxCount);
-            float fillPercent = 100 * occupancy.floatValue();
-            String result = StringUtils.translate("minihud.label.bundle_tooltip.count", count, maxCount, fillPercent);
+            int count;
+            float fillPercent;
+
+            if (maxCount != 64)
+            {
+                count = bundleData.size();
+                fillPercent = 100 * ((float) count / maxCount);
+            }
+            else
+            {
+                count = MathHelper.multiplyFraction(occupancy, maxCount);
+                fillPercent = 100 * occupancy.floatValue();
+            }
+
+            String result;
+
+            if (count > maxCount)
+            {
+                result = StringUtils.translate("minihud.label.bundle_tooltip.count.full", count, maxCount, fillPercent);
+            }
+            else
+            {
+                result = StringUtils.translate("minihud.label.bundle_tooltip.count", count, maxCount, fillPercent);
+            }
+
             lines.add(Text.of(result));
         }
     }
