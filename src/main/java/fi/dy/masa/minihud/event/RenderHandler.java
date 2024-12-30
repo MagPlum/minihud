@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.llamalad7.mixinextras.lib.apache.commons.tuple.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.joml.Matrix4f;
 
@@ -89,6 +89,7 @@ import fi.dy.masa.minihud.data.EntitiesDataManager;
 import fi.dy.masa.minihud.data.HudDataManager;
 import fi.dy.masa.minihud.data.MobCapDataHandler;
 import fi.dy.masa.minihud.mixin.*;
+import fi.dy.masa.minihud.renderer.InventoryOverlayHandler;
 import fi.dy.masa.minihud.renderer.OverlayRenderer;
 import fi.dy.masa.minihud.util.DataStorage;
 import fi.dy.masa.minihud.util.IServerEntityManager;
@@ -187,12 +188,16 @@ public class RenderHandler implements IRenderer
         if (Configs.Generic.INVENTORY_PREVIEW_ENABLED.getBooleanValue() &&
             Configs.Generic.INVENTORY_PREVIEW.getKeybind().isKeybindHeld())
         {
+            /*
             var inventory = RayTraceUtils.getTargetInventory(mc, true);
 
             if (inventory != null)
             {
                 fi.dy.masa.minihud.renderer.RenderUtils.renderInventoryOverlay(inventory, drawContext);
             }
+             */
+
+            InventoryOverlayHandler.getInstance().getRenderContext(drawContext, mc.getProfiler(), mc);
 
             // OG method (Works with Crafters also)
             //fi.dy.masa.minihud.renderer.RenderUtils.renderInventoryOverlay(mc, drawContext);
@@ -229,7 +234,7 @@ public class RenderHandler implements IRenderer
 
                 if (player != null)
                 {
-                    Pair<Entity, NbtCompound> pair = EntitiesDataManager.getInstance().requestEntity(player.getId());
+                    Pair<Entity, NbtCompound> pair = EntitiesDataManager.getInstance().requestEntity(world, player.getId());
                     NbtCompound nbt = new NbtCompound();
                     EnderChestInventory inv;
 
@@ -1743,7 +1748,7 @@ public class RenderHandler implements IRenderer
             }
             else
             {
-                pair = EntitiesDataManager.getInstance().requestEntity(lookedEntity.getId());
+                pair = EntitiesDataManager.getInstance().requestEntity(world, lookedEntity.getId());
             }
 
             // Remember the last entity so the "refresh time" is smoothed over.

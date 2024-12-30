@@ -4,7 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.hotkeys.*;
-import fi.dy.masa.malilib.render.InventoryOverlay;
+import fi.dy.masa.malilib.render.InventoryOverlayScreen;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.RendererCallbacks;
 import fi.dy.masa.minihud.config.RendererToggle;
@@ -12,16 +12,11 @@ import fi.dy.masa.minihud.gui.GuiConfigs;
 import fi.dy.masa.minihud.gui.GuiConfigs.ConfigGuiTab;
 import fi.dy.masa.minihud.gui.GuiShapeEditor;
 import fi.dy.masa.minihud.gui.GuiShapeManager;
-import fi.dy.masa.minihud.gui.InventoryOverlayScreen;
-import fi.dy.masa.minihud.renderer.OverlayRendererBeaconRange;
-import fi.dy.masa.minihud.renderer.OverlayRendererLightLevel;
-import fi.dy.masa.minihud.renderer.OverlayRendererSpawnChunks;
-import fi.dy.masa.minihud.renderer.OverlayRendererStructures;
+import fi.dy.masa.minihud.renderer.*;
 import fi.dy.masa.minihud.renderer.shapes.ShapeBase;
 import fi.dy.masa.minihud.renderer.shapes.ShapeManager;
 import fi.dy.masa.minihud.util.DataStorage;
 import fi.dy.masa.minihud.util.DebugInfoUtils;
-import fi.dy.masa.minihud.util.RayTraceUtils;
 
 public class KeyCallbacks
 {
@@ -143,12 +138,16 @@ public class KeyCallbacks
                         Configs.Generic.INVENTORY_PREVIEW.getKeybind().isKeybindHeld())
                 {
                     //RayTraceUtils.InventoryPreviewData inventory = RayTraceUtils.getTargetInventory(mc);
+                    /*
                     InventoryOverlay.Context inventory = RayTraceUtils.getTargetInventory(mc, false);
 
                     if (inventory != null)
                     {
                         mc.setScreen(new InventoryOverlayScreen(inventory));
                     }
+                     */
+
+                    InventoryOverlayHandler.getInstance().refreshInventoryOverlay(mc, Configs.Generic.SHULKER_DISPLAY_BACKGROUND_COLOR.getBooleanValue());
                 }
                 else
                 {
