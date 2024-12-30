@@ -101,7 +101,7 @@ public class OverlayRendererVillagerInfo extends OverlayRendererBase
             {
                 if (librarian.isClient())
                 {
-                    EntitiesDataManager.getInstance().requestEntity(librarian.getId());
+                    EntitiesDataManager.getInstance().requestEntity(world, librarian.getId());
                 }
                 List<String> overlay = new ArrayList<>();
                 TradeOfferList offers = ((IMixinMerchantEntity) librarian).minihud_offers();
@@ -186,7 +186,7 @@ public class OverlayRendererVillagerInfo extends OverlayRendererBase
             {
                 if (villager.getWorld().isClient)
                 {
-                    EntitiesDataManager.getInstance().requestEntity(villager.getId());
+                    EntitiesDataManager.getInstance().requestEntity(world, villager.getId());
                 }
 
                 int conversionTimer = ((IMixinZombieVillagerEntity) villager).minihud_conversionTimer();
