@@ -61,6 +61,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.util.profiler.Profiler;
+import net.minecraft.util.profiler.Profilers;
 import net.minecraft.world.LightType;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
@@ -197,7 +198,7 @@ public class RenderHandler implements IRenderer
             }
              */
 
-            InventoryOverlayHandler.getInstance().getRenderContext(drawContext, mc.getProfiler(), mc);
+            InventoryOverlayHandler.getInstance().getRenderContext(drawContext, profiler, mc);
 
             // OG method (Works with Crafters also)
             //fi.dy.masa.minihud.renderer.RenderUtils.renderInventoryOverlay(mc, drawContext);
