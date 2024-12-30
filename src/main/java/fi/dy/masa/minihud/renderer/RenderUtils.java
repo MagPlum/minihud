@@ -35,7 +35,6 @@ import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.game.BlockUtils;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.data.EntitiesDataManager;
-import fi.dy.masa.minihud.gui.InventoryOverlayScreen;
 import fi.dy.masa.minihud.mixin.IMixinAbstractHorseEntity;
 import fi.dy.masa.minihud.renderer.shapes.SideQuad;
 import fi.dy.masa.minihud.util.RayTraceUtils;
@@ -513,13 +512,14 @@ public class RenderUtils
         }
     }
 
-    //public static void renderInventoryOverlay(RayTraceUtils.InventoryPreviewData inventory, DrawContext drawContext)
+    /*
     public static void renderInventoryOverlay(InventoryOverlay.Context inventory, DrawContext drawContext)
     {
         var screen = new InventoryOverlayScreen(inventory);
         screen.init(MinecraftClient.getInstance(), 0, 0);
         screen.render(drawContext, 0, 0, 0);
     }
+     */
 
     // OG Method (Works)
     public static void renderInventoryOverlay(MinecraftClient mc, DrawContext drawContext)
@@ -575,7 +575,7 @@ public class RenderUtils
             if (entity.getWorld().isClient &&
                 Configs.Generic.ENTITY_DATA_SYNC.getBooleanValue())
             {
-                EntitiesDataManager.getInstance().requestEntity(entity.getId());
+                EntitiesDataManager.getInstance().requestEntity(world, entity.getId());
             }
 
             if (entity instanceof LivingEntity)
