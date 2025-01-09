@@ -1,12 +1,8 @@
 package fi.dy.masa.minihud.gui;
 
 import java.util.Locale;
-import java.util.function.Consumer;
-import java.util.function.DoubleConsumer;
-import java.util.function.DoubleSupplier;
-import java.util.function.IntConsumer;
-import java.util.function.IntSupplier;
-import java.util.function.Supplier;
+import java.util.function.*;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.entity.Entity;
@@ -14,38 +10,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+
 import fi.dy.masa.malilib.config.options.ConfigOptionList;
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.GuiRenderLayerEditBase;
-import fi.dy.masa.malilib.gui.GuiTextFieldDouble;
-import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
-import fi.dy.masa.malilib.gui.GuiTextFieldInteger;
-import fi.dy.masa.malilib.gui.MaLiLibIcons;
-import fi.dy.masa.malilib.gui.button.ButtonBase;
-import fi.dy.masa.malilib.gui.button.ButtonGeneric;
-import fi.dy.masa.malilib.gui.button.ButtonOnOff;
-import fi.dy.masa.malilib.gui.button.ConfigButtonOptionList;
-import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fi.dy.masa.malilib.gui.*;
+import fi.dy.masa.malilib.gui.button.*;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
 import fi.dy.masa.malilib.gui.widgets.WidgetCheckBox;
 import fi.dy.masa.malilib.gui.widgets.WidgetColorIndicator;
 import fi.dy.masa.malilib.interfaces.ICoordinateValueModifier;
-import fi.dy.masa.malilib.util.BlockSnap;
-import fi.dy.masa.malilib.util.EntityUtils;
-import fi.dy.masa.malilib.util.GuiUtils;
-import fi.dy.masa.malilib.util.LayerRange;
-import fi.dy.masa.malilib.util.PositionUtils;
-import fi.dy.masa.malilib.util.PositionUtils.CoordinateType;
-import fi.dy.masa.malilib.util.StringUtils;
+import fi.dy.masa.malilib.util.*;
+import fi.dy.masa.malilib.util.position.PositionUtils;
+import fi.dy.masa.malilib.util.position.PositionUtils.CoordinateType;
 import fi.dy.masa.minihud.gui.GuiConfigs.ConfigGuiTab;
-import fi.dy.masa.minihud.renderer.shapes.ShapeBase;
-import fi.dy.masa.minihud.renderer.shapes.ShapeBlocky;
-import fi.dy.masa.minihud.renderer.shapes.ShapeBox;
-import fi.dy.masa.minihud.renderer.shapes.ShapeCircle;
-import fi.dy.masa.minihud.renderer.shapes.ShapeCircleBase;
-import fi.dy.masa.minihud.renderer.shapes.ShapeLineBlock;
-import fi.dy.masa.minihud.renderer.shapes.ShapeSpawnSphere;
-import fi.dy.masa.minihud.renderer.shapes.ShapeType;
+import fi.dy.masa.minihud.renderer.shapes.*;
 import fi.dy.masa.minihud.util.ShapeRenderType;
 
 public class GuiShapeEditor extends GuiRenderLayerEditBase

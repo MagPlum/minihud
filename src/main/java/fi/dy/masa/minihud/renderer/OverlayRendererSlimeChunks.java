@@ -11,9 +11,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import fi.dy.masa.malilib.util.Color4f;
 import fi.dy.masa.malilib.util.EntityUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
+import fi.dy.masa.malilib.util.data.Color4f;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.RendererToggle;
 import fi.dy.masa.minihud.data.HudDataManager;
@@ -107,7 +107,7 @@ public class OverlayRendererSlimeChunks extends OverlayRendererBase
             final int centerX = MathHelper.floor(entity.getX()) >> 4;
             final int centerZ = MathHelper.floor(entity.getZ()) >> 4;
             final Color4f colorSides = Configs.Colors.SLIME_CHUNKS_OVERLAY_COLOR.getColor();
-            final Color4f colorLines = Color4f.fromColor(colorSides, 1.0F);
+            final Color4f colorLines = Color4f.fromColor(colorSides.intValue, 1.0F);
             BlockPos.Mutable pos1 = new BlockPos.Mutable();
             BlockPos.Mutable pos2 = new BlockPos.Mutable();
             int r = MathHelper.clamp(Configs.Generic.SLIME_CHUNK_OVERLAY_RADIUS.getIntegerValue(), -1, 40);

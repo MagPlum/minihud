@@ -2,6 +2,7 @@ package fi.dy.masa.minihud.renderer.shapes;
 
 import java.util.List;
 import com.google.gson.JsonObject;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.VertexFormats;
@@ -10,11 +11,12 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import fi.dy.masa.malilib.util.Color4f;
+
 import fi.dy.masa.malilib.util.EntityUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
-import fi.dy.masa.malilib.util.PositionUtils;
 import fi.dy.masa.malilib.util.StringUtils;
+import fi.dy.masa.malilib.util.data.Color4f;
+import fi.dy.masa.malilib.util.position.PositionUtils;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.renderer.RenderObjectBase;
 
@@ -187,7 +189,7 @@ public class ShapeBox extends ShapeBase
             }
         }
 
-        Color4f color = Color4f.fromColor(this.color, 1f);
+        Color4f color = Color4f.fromColor(this.color.intValue, 1f);
         renderBoxEnabledEdgeLines(box, color, this.enabledSidesMask, BUFFER_2);
 
         if (this.gridEnabled)

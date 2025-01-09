@@ -53,7 +53,6 @@ import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.hit.BlockHitResult;
@@ -61,7 +60,6 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.profiler.Profilers;
 import net.minecraft.world.LightType;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.World;
@@ -75,7 +73,6 @@ import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.Constants;
 import fi.dy.masa.malilib.util.InventoryUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.WorldUtils;
@@ -95,7 +92,6 @@ import fi.dy.masa.minihud.renderer.OverlayRenderer;
 import fi.dy.masa.minihud.util.DataStorage;
 import fi.dy.masa.minihud.util.IServerEntityManager;
 import fi.dy.masa.minihud.util.MiscUtils;
-import fi.dy.masa.minihud.util.RayTraceUtils;
 
 public class RenderHandler implements IRenderer
 {
@@ -1412,6 +1408,15 @@ public class RenderHandler implements IRenderer
                             this.addLineI18n("minihud.info_line.entity_variant.parrot", variant.asString());
                         }
                     }
+                    else if (entityType.equals(EntityType.PIG))
+                    {
+                        RegistryKey<PigVariant> variant = NbtEntityUtils.getPigVariantFromNbt(nbt, world.getRegistryManager());
+
+                        if (variant != null)
+                        {
+                            this.addLineI18n("minihud.info_line.entity_variant.pig", variant.getValue().getPath());
+                        }
+                    }
                     else if (entityType.equals(EntityType.RABBIT))
                     {
                         RabbitEntity.RabbitType rabbitType = NbtEntityUtils.getRabbitTypeFromNbt(nbt);
@@ -1497,6 +1502,10 @@ public class RenderHandler implements IRenderer
                 else if (pair.getLeft() instanceof ParrotEntity parrot)
                 {
                     this.addLineI18n("minihud.info_line.entity_variant.parrot", parrot.getVariant().asString());
+                }
+                else if (pair.getLeft() instanceof PigEntity pig)
+                {
+                    this.addLineI18n("minihud.info_line.entity_variant.pig", pig.getVariant().getKey().get().getValue().getPath());
                 }
                 else if (pair.getLeft() instanceof RabbitEntity rabbit)
                 {

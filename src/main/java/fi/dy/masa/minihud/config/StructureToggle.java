@@ -1,6 +1,7 @@
 package fi.dy.masa.minihud.config;
 
 import com.google.common.collect.ImmutableList;
+
 import fi.dy.masa.malilib.config.IConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigColor;

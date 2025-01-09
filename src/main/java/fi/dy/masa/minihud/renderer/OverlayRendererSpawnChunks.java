@@ -2,6 +2,7 @@ package fi.dy.masa.minihud.renderer;
 
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.VertexFormats;
@@ -11,8 +12,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import fi.dy.masa.malilib.util.Color4f;
-import fi.dy.masa.malilib.util.PositionUtils;
+
+import fi.dy.masa.malilib.util.data.Color4f;
+import fi.dy.masa.malilib.util.position.PositionUtils;
 import fi.dy.masa.minihud.MiniHUD;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.RendererToggle;
