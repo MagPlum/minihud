@@ -131,7 +131,7 @@ public class MiscUtils
 
     public static int getSpawnableChunksCount(@Nonnull ServerWorld world)
     {
-        return world.getChunkManager().chunkLoadingManager.getTicketManager().getTickedChunkCount();
+        return world.getChunkManager().chunkLoadingManager.getLevelManager().getTickedChunkCount();
     }
 
     public static void addAxolotlTooltip(ItemStack stack, List<Text> lines)
