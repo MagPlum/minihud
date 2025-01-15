@@ -42,6 +42,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -1740,6 +1741,84 @@ public class RenderHandler implements IRenderer
         }
     }
 
+    private boolean isEntityDataValid(@Nonnull NbtCompound nbt)
+    {
+        // Has a valid Inventory = ServerWorld
+        if (InventoryUtils.hasNbtItems(nbt))
+        {
+            return true;
+        }
+
+        System.out.printf("isEntityDataValid(): nbt: [%s]\n", nbt.toString());
+
+        for (String key : nbt.getKeys())
+        {
+            switch (key)
+            {
+                // If `Fire == 0` instead of `-1` means it's ClientWorld; it's ridiculous, but it works.
+                case NbtKeys.FIRE ->
+                {
+                    int fire = nbt.getShort(NbtKeys.FIRE);
+
+                    if (fire < 0 || fire > 0)
+                    {
+                        return true;
+                    }
+                }
+                // If `Age == -1 or 1 instead of 0 or > 1 it's ClientWorld; it's ridiculous, but it works.
+                case NbtKeys.AGE ->
+                {
+                    int age = nbt.getInt(NbtKeys.AGE);
+
+                    if (age == 0 || age > 1)
+                    {
+                        return true;
+                    }
+                }
+                // Has a Brain besides the default = ServerWorld
+                case NbtKeys.BRAIN ->
+                {
+                    NbtCompound tag = nbt.getCompound(NbtKeys.BRAIN);
+
+                    if (!tag.isEmpty() && !tag.getCompound(NbtKeys.MEMORIES).isEmpty())
+                    {
+                        return true;
+                    }
+                }
+                case NbtKeys.OFFERS -> { return true; }
+                case NbtKeys.TRADE_RECIPES -> { return true; }
+                case NbtKeys.ZOMBIE_CONVERSION ->
+                {
+                    if (nbt.getInt(NbtKeys.ZOMBIE_CONVERSION) > 0)
+                    {
+                        return true;
+                    }
+                }
+                case NbtKeys.DROWNED_CONVERSION ->
+                {
+                    if (nbt.getInt(NbtKeys.DROWNED_CONVERSION) > 0)
+                    {
+                        return true;
+                    }
+                }
+                case NbtKeys.STRAY_CONVERSION ->
+                {
+                    if (nbt.getInt(NbtKeys.STRAY_CONVERSION) > 0)
+                    {
+                        return true;
+                    }
+                }
+                case NbtKeys.CONVERSION_PLAYER -> { return true; }
+                case NbtKeys.RECIPE_BOOK -> { return true; }
+                case NbtKeys.RECIPES -> { return true; }
+                case NbtKeys.SADDLE -> { return true; }
+                case NbtKeys.EFFECTS -> { return true; }
+            }
+        }
+
+        return false;
+    }
+
     @Nullable
     public Pair<Entity, NbtCompound> getTargetEntity(World world, MinecraftClient mc)
     {
@@ -1765,11 +1844,25 @@ public class RenderHandler implements IRenderer
             if (pair == null && this.lastEntity != null &&
                 this.lastEntity.getLeft().getId() == lookedEntity.getId())
             {
+                System.out.print("getTargetEntity() --> LAST 1\n");
                 pair = this.lastEntity;
             }
-            else if (pair != null)
+            else if (pair != null && pair.getRight() != null &&
+                    !pair.getRight().isEmpty() &&
+                     this.isEntityDataValid(pair.getRight()))
             {
+                System.out.print("getTargetEntity() --> SAVE 1\n");
                 this.lastEntity = pair;
+            }
+            else if (this.lastEntity != null &&
+                    this.lastEntity.getLeft().getId() == lookedEntity.getId())
+            {
+                System.out.print("getTargetEntity() --> LAST 2\n");
+                pair = this.lastEntity;
+            }
+            else
+            {
+                System.out.print("getTargetEntity() --> ELSE 1\n");
             }
 
             return pair;
