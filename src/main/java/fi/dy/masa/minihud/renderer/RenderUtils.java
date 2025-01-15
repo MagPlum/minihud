@@ -30,12 +30,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
+import fi.dy.masa.malilib.mixin.IMixinAbstractHorseEntity;
 import fi.dy.masa.malilib.render.InventoryOverlay;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.game.BlockUtils;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.data.EntitiesDataManager;
-import fi.dy.masa.minihud.mixin.IMixinAbstractHorseEntity;
 import fi.dy.masa.minihud.renderer.shapes.SideQuad;
 import fi.dy.masa.minihud.util.RayTraceUtils;
 import fi.dy.masa.minihud.util.ShapeRenderType;
@@ -593,7 +593,7 @@ public class RenderUtils
             }
             else if (entity instanceof AbstractHorseEntity)
             {
-                inv = ((IMixinAbstractHorseEntity) entity).minihud_getHorseInventory();
+                inv = ((IMixinAbstractHorseEntity) entity).malilib_getHorseInventory();
             }
         }
 
