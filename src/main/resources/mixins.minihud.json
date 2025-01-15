@@ -5,7 +5,6 @@
   "minVersion": "0.8",
   "client": [
     "IMixinAbstractFurnaceBlockEntity",
-    "IMixinAbstractHorseEntity",
     "IMixinBeaconBlockEntity",
     "IMixinBiomeAccess",
     "IMixinChunkDeltaUpdateS2CPacket",
@@ -13,10 +12,8 @@
     "IMixinEntity",
     "IMixinEntityNavigation",
     "IMixinLeashable",
-    "IMixinMerchantEntity",
     "IMixinMinecraftServer",
     "IMixinPassiveEntity",
-    "IMixinPiglinEntity",
     "IMixinServerWorld",
     "IMixinSkeletonEntity",
     "IMixinWorld",
