@@ -156,6 +156,11 @@ public class InventoryOverlayHandler implements IInventoryOverlayHandler
             }
         }
 
+        if (cameraEntity == null)
+        {
+            return null;
+        }
+
         HitResult trace = RayTraceUtils.getRayTraceFromEntity(world, cameraEntity, false);
         NbtCompound nbt = new NbtCompound();
 
