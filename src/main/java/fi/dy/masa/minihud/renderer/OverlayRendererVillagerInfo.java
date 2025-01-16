@@ -27,7 +27,7 @@ import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.interfaces.IClientTickHandler;
-import fi.dy.masa.malilib.mixin.IMixinMerchantEntity;
+import fi.dy.masa.malilib.mixin.entity.IMixinMerchantEntity;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.malilib.util.nbt.NbtEntityUtils;
@@ -36,7 +36,7 @@ import fi.dy.masa.minihud.MiniHUD;
 import fi.dy.masa.minihud.config.Configs;
 import fi.dy.masa.minihud.config.RendererToggle;
 import fi.dy.masa.minihud.data.EntitiesDataManager;
-import fi.dy.masa.minihud.mixin.IMixinZombieVillagerEntity;
+import fi.dy.masa.minihud.mixin.entity.IMixinZombieVillagerEntity;
 import fi.dy.masa.minihud.util.EntityUtils;
 
 public class OverlayRendererVillagerInfo extends OverlayRendererBase implements IClientTickHandler
