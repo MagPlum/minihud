@@ -29,7 +29,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
-import fi.dy.masa.malilib.mixin.IMixinAbstractHorseEntity;
+import fi.dy.masa.malilib.mixin.entity.IMixinAbstractHorseEntity;
 import fi.dy.masa.malilib.render.InventoryOverlay;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.game.BlockUtils;
@@ -512,22 +512,13 @@ public class RenderUtils
         }
     }
 
-    /*
-    public static void renderInventoryOverlay(InventoryOverlay.Context inventory, DrawContext drawContext)
-    {
-        var screen = new InventoryOverlayScreen(inventory);
-        screen.init(MinecraftClient.getInstance(), 0, 0);
-        screen.render(drawContext, 0, 0, 0);
-    }
-     */
-
     // OG Method (Works)
     public static void renderInventoryOverlay(MinecraftClient mc, DrawContext drawContext)
     {
         World world = WorldUtils.getBestWorld(mc);
         Entity cameraEntity = EntityUtils.getCameraEntity();
 
-        if (mc.player == null)
+        if (mc.player == null || world == null)
         {
             return;
         }
