@@ -373,7 +373,7 @@ public class OverlayRendererVillagerInfo extends OverlayRendererBase implements 
 
                 if (conversionTimer > 0)
                 {
-                    this.renderAtEntity(List.of(String.format("%.1fs", (float) conversionTimer / 20)), entity, villager);
+                    this.renderAtEntity(List.of(String.format("%ds", Math.round((float) conversionTimer / 20))), entity, villager);
                 }
             }
         }

@@ -873,6 +873,7 @@
   "minihud.info_line.servux": "Servux 버전: %s",
   "minihud.info_line.servux.entity_sync": "엔티티 동기화: cB: %02d, pB: %02d, cE: %02d, pE: %02d",
   "minihud.info_line.servux.not_connected": "Servux 버전: §c연결 안됨§r",
+  "minihud.info_line.servux.no_structures_hud": "HudSync: sR: %02d (%s), wS: %s",
   "minihud.info_line.servux.structures": "구조물: sC: %02d, sR: %02d (%s), wS: %s",
   "minihud.info_line.servux.structures_integrated": "구조물 (통합 서버): sC: %02d, sR: %02d (%s), wS: %s",
   "minihud.info_line.slime_chunk": "슬라임 청크: %s",

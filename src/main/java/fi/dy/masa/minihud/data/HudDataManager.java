@@ -23,6 +23,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.network.ClientPlayHandler;
 import fi.dy.masa.malilib.network.IPluginClientPlayHandler;
@@ -37,7 +38,6 @@ import fi.dy.masa.minihud.config.RendererToggle;
 import fi.dy.masa.minihud.mixin.IMixinServerRecipeManager;
 import fi.dy.masa.minihud.network.ServuxHudHandler;
 import fi.dy.masa.minihud.network.ServuxHudPacket;
-import fi.dy.masa.minihud.network.ServuxStructuresPacket;
 import fi.dy.masa.minihud.renderer.OverlayRendererSpawnChunks;
 import fi.dy.masa.minihud.util.DataStorage;
 
@@ -467,6 +467,24 @@ public class HudDataManager
         //System.out.printf("onServerWeatherTick - c: %d, r: %d, t: %d, iR: %s, iT: %s\n", clearTime, rainTime, thunderTime, isRaining, isThunder);
     }
 
+    public void onHudDataSyncToggled(ConfigBoolean config)
+    {
+        if (this.hasInValidServux)
+        {
+            this.reset(true);
+        }
+
+        if (this.hasServuxServer() && !config.getBooleanValue())
+        {
+            this.unregisterChannel();
+        }
+        else
+        {
+            this.shouldRegister = true;
+            this.registerChannel();
+        }
+    }
+
     public void registerChannel()
     {
         this.shouldRegister = true;
@@ -504,7 +522,7 @@ public class HudDataManager
         {
             MiniHUD.printDebug("HudDataStorage#receiveMetadata(): received METADATA from Servux");
 
-            if (data.getInt("version") != ServuxStructuresPacket.PROTOCOL_VERSION)
+            if (data.getInt("version") != ServuxHudPacket.PROTOCOL_VERSION)
             {
                 MiniHUD.logger.warn("hudDataChannel: Mis-matched protocol version!");
             }
@@ -522,7 +540,7 @@ public class HudDataManager
 
             if (Configs.Generic.HUD_DATA_SYNC.getBooleanValue())
             {
-                this.registerChannel();
+                //this.registerChannel();
                 this.requestRecipeManager();
                 return true;
             }
@@ -579,9 +597,12 @@ public class HudDataManager
                 this.setWorldSeed(data.getLong("worldSeed"));
             }
 
-            if (Configs.Generic.HUD_DATA_SYNC.getBooleanValue() && !this.hasServuxServer())
+            if (Configs.Generic.HUD_DATA_SYNC.getBooleanValue())
             {
-                this.registerChannel();
+                if (!this.hasServuxServer())
+                {
+                    this.registerChannel();
+                }
             }
             else
             {
@@ -625,9 +646,12 @@ public class HudDataManager
                 this.isRaining = this.rainWeatherTimer > 0 && !this.isRaining;
             }
 
-            if (Configs.Generic.HUD_DATA_SYNC.getBooleanValue() && !this.hasServuxServer())
+            if (Configs.Generic.HUD_DATA_SYNC.getBooleanValue())
             {
-                this.registerChannel();
+                if (!this.hasServuxServer())
+                {
+                    this.registerChannel();
+                }
             }
             else
             {
@@ -695,9 +719,12 @@ public class HudDataManager
                 MiniHUD.logger.warn("receiveRecipeManager: failed to read Recipe Manager from Servux (Collection was empty!)");
             }
 
-            if (Configs.Generic.HUD_DATA_SYNC.getBooleanValue() && !this.hasServuxServer())
+            if (Configs.Generic.HUD_DATA_SYNC.getBooleanValue())
             {
-                this.registerChannel();
+                if (!this.hasServuxServer())
+                {
+                    this.registerChannel();
+                }
             }
             else
             {

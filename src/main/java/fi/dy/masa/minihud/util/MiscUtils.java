@@ -144,7 +144,7 @@ public class MiscUtils
             int variantId = tag.getInt(AxolotlEntity.VARIANT_KEY);
             // FIXME 1.19.3+ this is not validated now... with AIOOB it will return the entry for ID 0
             AxolotlEntity.Variant variant = AxolotlEntity.Variant.byIndex(variantId);
-            String variantName = variant.name();
+            String variantName = variant.getId();
             MutableText labelText = Text.translatable("minihud.label.axolotl_tooltip.label");
             MutableText valueText = Text.translatable("minihud.label.axolotl_tooltip.value", variantName, variantId);
 
