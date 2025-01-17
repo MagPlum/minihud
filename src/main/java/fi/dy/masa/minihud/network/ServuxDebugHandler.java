@@ -123,7 +123,7 @@ public abstract class ServuxDebugHandler<T extends CustomPayload> implements IPl
         {
             if (this.failures > MAX_FAILURES)
             {
-                MiniHUD.printDebug("encodeClientData(): encountered [{}] sendPayload failures, cancelling any Servux join attempt(s)", MAX_FAILURES);
+                MiniHUD.printDebug("ServuxDebugHandler#encodeClientData(): encountered [{}] sendPayload failures, cancelling any Servux join attempt(s)", MAX_FAILURES);
                 this.servuxRegistered = false;
                 ServuxDebugHandler.INSTANCE.unregisterPlayReceiver();
                 DebugDataManager.getInstance().onPacketFailure();
