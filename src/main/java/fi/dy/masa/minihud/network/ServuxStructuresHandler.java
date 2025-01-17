@@ -113,7 +113,7 @@ public abstract class ServuxStructuresHandler<T extends CustomPayload> implement
                     this.servuxRegistered = true;
                 }
             }
-            // For backwards compat, only if hud_data isn't connected
+            // For backwards compat, only if hud_data isn't connected, or if Servux is too old
             case PACKET_S2C_SPAWN_METADATA ->
             {
                 if (HudDataManager.getInstance().hasServuxServer() == false)

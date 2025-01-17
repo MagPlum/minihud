@@ -161,7 +161,7 @@ public abstract class ServuxEntitiesHandler<T extends CustomPayload> implements 
         {
             if (this.failures > MAX_FAILURES)
             {
-                MiniHUD.printDebug("encodeClientData(): encountered [{}] sendPayload failures, cancelling any Servux join attempt(s)", MAX_FAILURES);
+                MiniHUD.printDebug("ServuxEntitiesHandler#encodeClientData(): encountered [{}] sendPayload failures, cancelling any Servux join attempt(s)", MAX_FAILURES);
                 this.servuxRegistered = false;
                 ServuxEntitiesHandler.INSTANCE.unregisterPlayReceiver();
                 EntitiesDataManager.getInstance().onPacketFailure();
