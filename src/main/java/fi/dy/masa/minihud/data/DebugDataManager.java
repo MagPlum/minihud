@@ -471,7 +471,7 @@ public class DebugDataManager
 
             if (entity instanceof VillagerEntity villager)
             {
-                profession = villager.getVillagerData().getProfession().toString();
+                profession = villager.getVillagerData().profession().toString();
                 xp = villager.getExperience();
                 inventory = villager.getInventory().toString();
                 wantsGolem = villager.canSummonGolem(serverWorld.getTime());

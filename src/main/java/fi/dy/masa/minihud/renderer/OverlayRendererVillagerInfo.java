@@ -236,7 +236,7 @@ public class OverlayRendererVillagerInfo extends OverlayRendererBase implements 
 
         if (Configs.Generic.VILLAGER_OFFER_ENCHANTMENT_BOOKS.getBooleanValue())
         {
-            List<VillagerEntity> librarians = EntityUtils.getEntitiesByClass(mc, VillagerEntity.class, box, villager -> villager.getVillagerData().getProfession() == VillagerProfession.LIBRARIAN);
+            List<VillagerEntity> librarians = EntityUtils.getEntitiesByClass(mc, VillagerEntity.class, box, villager -> villager.getVillagerData().profession().matchesKey(VillagerProfession.LIBRARIAN));
             Map<Object2IntMap.Entry<RegistryEntry<Enchantment>>, Integer> lowestPrices = new HashMap<>();
 
             // Prepare

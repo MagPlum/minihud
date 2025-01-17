@@ -1260,7 +1260,7 @@ public class RenderHandler implements IRenderer
                 {
                     NbtCompound nbt = pair.getRight();
                     Pair<Double, Double> healthPair = NbtEntityUtils.getHealthFromNbt(nbt);
-                    Pair<UUID, ItemStack> ownerPair = NbtEntityUtils.getOwnerAndSaddle(nbt, world.getRegistryManager());
+                    Pair<UUID, Boolean> ownerPair = NbtEntityUtils.getTamableOwner(nbt);
                     Pair<Integer, Integer> agePair = NbtEntityUtils.getAgeFromNbt(nbt);
 
                     double health = healthPair.getLeft();
@@ -1341,7 +1341,7 @@ public class RenderHandler implements IRenderer
 
                         if (variant != null)
                         {
-                            this.addLineI18n("minihud.info_line.entity_variant.axolotl", variant.getName());
+                            this.addLineI18n("minihud.info_line.entity_variant.axolotl", variant.name());
                         }
                     }
                     else if (entityType.equals(EntityType.CAT))
@@ -1423,7 +1423,7 @@ public class RenderHandler implements IRenderer
                     }
                     else if (entityType.equals(EntityType.RABBIT))
                     {
-                        RabbitEntity.RabbitType rabbitType = NbtEntityUtils.getRabbitTypeFromNbt(nbt);
+                        RabbitEntity.Variant rabbitType = NbtEntityUtils.getRabbitTypeFromNbt(nbt);
 
                         if (rabbitType != null)
                         {
@@ -1460,7 +1460,7 @@ public class RenderHandler implements IRenderer
                 }
                 else if (pair.getLeft() instanceof AxolotlEntity axolotl)
                 {
-                    this.addLineI18n("minihud.info_line.entity_variant.axolotl", axolotl.getVariant().getName());
+                    this.addLineI18n("minihud.info_line.entity_variant.axolotl", axolotl.getVariant().name());
                 }
                 else if (pair.getLeft() instanceof CatEntity cat)
                 {
@@ -1474,7 +1474,7 @@ public class RenderHandler implements IRenderer
                 }
                 else if (pair.getLeft() instanceof HorseEntity horse)
                 {
-                    this.addLineI18n("minihud.info_line.entity_variant.horse", horse.getVariant().asString(), horse.getMarking().name().toLowerCase());
+                    this.addLineI18n("minihud.info_line.entity_variant.horse", horse.getHorseColor().asString(), horse.getMarking().name().toLowerCase());
                 }
                 else if (pair.getLeft() instanceof LlamaEntity llama)
                 {
@@ -1521,11 +1521,11 @@ public class RenderHandler implements IRenderer
                 }
                 else if (pair.getLeft() instanceof TropicalFishEntity fish)
                 {
-                    this.addLineI18n("minihud.info_line.entity_variant.tropical_fish", fish.getVariant().asString());
+                    this.addLineI18n("minihud.info_line.entity_variant.tropical_fish", fish.getVariety().asString());
                 }
                 else if (pair.getLeft() instanceof WolfEntity wolf)
                 {
-                    RegistryKey<WolfVariant> variant = wolf.getVariant().getKey().orElse(WolfVariants.PALE);
+                    RegistryKey<WolfVariant> variant = wolf.get(DataComponentTypes.WOLF_VARIANT).getKey().get();
                     this.addLineI18n("minihud.info_line.entity_variant.wolf", variant.getValue().getPath(), wolf.getCollarColor().getName());
                 }
             }
@@ -1814,7 +1814,7 @@ public class RenderHandler implements IRenderer
                 case NbtKeys.CONVERSION_PLAYER -> { return true; }
                 case NbtKeys.RECIPE_BOOK -> { return true; }
                 case NbtKeys.RECIPES -> { return true; }
-                case NbtKeys.SADDLE -> { return true; }
+                //case NbtKeys.SADDLE -> { return true; }
                 case NbtKeys.EFFECTS -> { return true; }
             }
         }
