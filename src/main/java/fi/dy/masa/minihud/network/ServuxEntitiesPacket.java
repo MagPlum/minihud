@@ -101,7 +101,7 @@ public class ServuxEntitiesPacket implements IClientPayloadData
     public static ServuxEntitiesPacket ResponseS2CData(@Nonnull PacketByteBuf buffer)
     {
         var packet = new ServuxEntitiesPacket(Type.PACKET_S2C_NBT_RESPONSE_DATA);
-        packet.buffer = buffer;
+        packet.buffer = new PacketByteBuf(buffer.copy());
         packet.nbt = new NbtCompound();
         return packet;
     }
@@ -116,7 +116,7 @@ public class ServuxEntitiesPacket implements IClientPayloadData
     public static ServuxEntitiesPacket ResponseC2SData(@Nonnull PacketByteBuf buffer)
     {
         var packet = new ServuxEntitiesPacket(Type.PACKET_C2S_NBT_RESPONSE_DATA);
-        packet.buffer = buffer;
+        packet.buffer = new PacketByteBuf(buffer.copy());
         packet.nbt = new NbtCompound();
         return packet;
     }

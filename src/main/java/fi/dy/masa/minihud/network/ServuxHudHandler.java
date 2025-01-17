@@ -151,7 +151,7 @@ public abstract class ServuxHudHandler<T extends CustomPayload> implements IPlug
         {
             if (this.failures > MAX_FAILURES)
             {
-                MiniHUD.printDebug("encodeClientData(): encountered [{}] sendPayload failures, cancelling any Servux join attempt(s)", MAX_FAILURES);
+                MiniHUD.printDebug("ServuxHudHandler#encodeClientData(): encountered [{}] sendPayload failures, cancelling any Servux join attempt(s)", MAX_FAILURES);
                 this.servuxRegistered = false;
                 ServuxHudHandler.INSTANCE.unregisterPlayReceiver();
                 HudDataManager.getInstance().onPacketFailure();
