@@ -868,6 +868,7 @@
   "minihud.info_line.servux": "Servux Version: %s",
   "minihud.info_line.servux.entity_sync": "EntitySync: cB: %02d, pB: %02d, cE: %02d, pE: %02d",
   "minihud.info_line.servux.not_connected": "Servux Version: §cnot_connected§r",
+  "minihud.info_line.servux.no_structures_hud": "HudSync: sR: %02d (%s), wS: %s",
   "minihud.info_line.servux.structures": "Structures: sC: %02d, sR: %02d (%s), wS: %s",
   "minihud.info_line.servux.structures_integrated": "Structures (Integrated Server): sC: %02d, sR: %02d (%s), wS: %s",
   "minihud.info_line.slime_chunk": "Slime chunk: %s",
