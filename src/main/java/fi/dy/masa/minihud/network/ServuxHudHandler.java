@@ -79,14 +79,8 @@ public abstract class ServuxHudHandler<T extends CustomPayload> implements IPlug
                     this.servuxRegistered = true;
                 }
             }
-            case PACKET_S2C_SPAWN_DATA ->
-            {
-                HudDataManager.getInstance().receiveSpawnMetadata(packet.getCompound());
-            }
-            case PACKET_S2C_WEATHER_TICK ->
-            {
-                HudDataManager.getInstance().receiveWeatherData(packet.getCompound());
-            }
+            case PACKET_S2C_SPAWN_DATA -> HudDataManager.getInstance().receiveSpawnMetadata(packet.getCompound());
+            case PACKET_S2C_WEATHER_TICK -> HudDataManager.getInstance().receiveWeatherData(packet.getCompound());
             case PACKET_S2C_NBT_RESPONSE_DATA ->
             {
                 if (this.readingSessionKey == -1)
@@ -94,7 +88,7 @@ public abstract class ServuxHudHandler<T extends CustomPayload> implements IPlug
                     this.readingSessionKey = Random.create(Util.getMeasuringTimeMs()).nextLong();
                 }
 
-                MiniHUD.printDebug("ServuxHudHandler#decodeClientData(): received Entity Data Packet Slice of size {} (in bytes) // reading session key [{}]", packet.getTotalSize(), this.readingSessionKey);
+                MiniHUD.printDebug("ServuxHudHandler#decodeClientData(): received Hud Data Packet Slice of size {} (in bytes) // reading session key [{}]", packet.getTotalSize(), this.readingSessionKey);
                 PacketByteBuf fullPacket = PacketSplitter.receive(this, this.readingSessionKey, packet.getBuffer());
 
                 if (fullPacket != null)
@@ -106,7 +100,7 @@ public abstract class ServuxHudHandler<T extends CustomPayload> implements IPlug
                     }
                     catch (Exception e)
                     {
-                        MiniHUD.logger.error("ServuxHudHandler#decodeClientData(): Entity Data: error reading fullBuffer [{}]", e.getLocalizedMessage());
+                        MiniHUD.logger.error("ServuxHudHandler#decodeClientData(): Hud Data: error reading fullBuffer [{}]", e.getLocalizedMessage());
                     }
                 }
             }

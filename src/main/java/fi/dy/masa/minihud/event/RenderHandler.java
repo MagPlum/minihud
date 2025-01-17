@@ -512,16 +512,26 @@ public class RenderHandler implements IRenderer
         {
             if (EntitiesDataManager.getInstance().hasServuxServer())
             {
-                this.addLineI18n("minihud.info_line.servux", EntitiesDataManager.getInstance().getServuxVersion());
+                this.addLineI18n("minihud.info_line.servux",
+                                 EntitiesDataManager.getInstance().getServuxVersion());
             }
             else if (this.getDataStorage().hasServuxServer())
             {
-                this.addLineI18n("minihud.info_line.servux", this.getDataStorage().getServuxVersion());
+                this.addLineI18n("minihud.info_line.servux",
+                                 this.getDataStorage().getServuxVersion());
             }
-            else if (this.getDataStorage().hasIntegratedServer() == false)
+            else if (this.getHudData().hasServuxServer())
+            {
+                this.addLineI18n("minihud.info_line.servux",
+                                 this.getHudData().getServuxVersion());
+            }
+            else if (this.getDataStorage().hasIntegratedServer() == false &&
+                    !EntitiesDataManager.getInstance().hasServuxServer() &&
+                    !this.getHudData().hasServuxServer())
             {
                 this.addLineI18n("minihud.info_line.servux.not_connected");
             }
+
             if (EntitiesDataManager.getInstance().hasServuxServer())
             {
                 this.addLineI18n("minihud.info_line.servux.entity_sync",
@@ -535,6 +545,14 @@ public class RenderHandler implements IRenderer
             {
                 this.addLineI18n("minihud.info_line.servux.structures",
                                  this.getDataStorage().getStrucutreCount(),
+                                 this.getHudData().getSpawnChunkRadius(),
+                                 this.getHudData().getWorldSpawn().toShortString(),
+                                 this.getHudData().isWorldSpawnKnown() ? StringUtils.translate("minihud.info_line.slime_chunk.yes") : StringUtils.translate("minihud.info_line.slime_chunk.no")
+                );
+            }
+            else if (this.getHudData().hasServuxServer())
+            {
+                this.addLineI18n("minihud.info_line.servux.no_structures_hud",
                                  this.getHudData().getSpawnChunkRadius(),
                                  this.getHudData().getWorldSpawn().toShortString(),
                                  this.getHudData().isWorldSpawnKnown() ? StringUtils.translate("minihud.info_line.slime_chunk.yes") : StringUtils.translate("minihud.info_line.slime_chunk.no")
@@ -1741,7 +1759,7 @@ public class RenderHandler implements IRenderer
             return true;
         }
 
-        System.out.printf("isEntityDataValid(): nbt: [%s]\n", nbt.toString());
+        //System.out.printf("isEntityDataValid(): nbt: [%s]\n", nbt.toString());
 
         for (String key : nbt.getKeys())
         {
@@ -1836,25 +1854,18 @@ public class RenderHandler implements IRenderer
             if (pair == null && this.lastEntity != null &&
                 this.lastEntity.getLeft().getId() == lookedEntity.getId())
             {
-                System.out.print("getTargetEntity() --> LAST 1\n");
                 pair = this.lastEntity;
             }
             else if (pair != null && pair.getRight() != null &&
                     !pair.getRight().isEmpty() &&
                      this.isEntityDataValid(pair.getRight()))
             {
-                System.out.print("getTargetEntity() --> SAVE 1\n");
                 this.lastEntity = pair;
             }
             else if (this.lastEntity != null &&
                     this.lastEntity.getLeft().getId() == lookedEntity.getId())
             {
-                System.out.print("getTargetEntity() --> LAST 2\n");
                 pair = this.lastEntity;
-            }
-            else
-            {
-                System.out.print("getTargetEntity() --> ELSE 1\n");
             }
 
             return pair;
